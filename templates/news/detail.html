@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} | Editorial Detail{% endblock %}
+
+{% block content %}
+<!-- NEW: READING PROGRESS BAR (STICKY) -->
+<div id="progress-container" class="fixed top-0 left-0 w-full h-[3px] bg-transparent z-[200]">
+    <div id="progress-bar" class="h-full bg-red-600 w-0 transition-all duration-100 ease-out shadow-[0_0_10px_rgba(255,59,48,0.5)]"></div>
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('progress-bar').style.width = scrolled + "%";
+    });
+</script>
+
+<div class="max-w-[1320px] mx-auto grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 lg:gap-24">
+    
+    <!-- LEFT COLUMN: ARTICLE CONTENT -->
+    <article class="space-y-16">
+        <!-- DYNAMIC BACK NAV -->
+        <div class="pt-4">
+            <a href="javascript:history.back()" class="group inline-flex items-center text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] hover:text-red-600 transition-colors">
+                <svg class="w-4 h-4 mr-3 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <span id="dynamic-back-text">Back to Editorial</span>
+            </a>
+        </div>
+
+        <script>
+            (function() {
+                const ref = document.referrer;
+                const backText = document.getElementById('dynamic-back-text');
+                if (ref && ref.includes(window.location.origin)) {
+                    if (ref.includes('q=')) {
+                        backText.innerText = 'Back to Results';
+                    } else if (ref.includes('cat=')) {
+                        try {
+                            const urlParams = new URLSearchParams(ref.split('?')[1]);
+                            const cat = urlParams.get('cat');
+                            if (cat) backText.innerText = 'Back to ' + cat;
+                        } catch(e) {}
+                    }
+                }
+            })();
+        </script>
+
+        <!-- Editorial Header -->
+        <header class="space-y-12">
+            <div class="flex items-center space-x-4 mb-8">
+                <span class="highlight-red text-[10px] font-black uppercase tracking-[0.2em] rounded-full px-5 py-1.5">
+                    {{ article.category }}
+                </span>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Verified Content
+                </span>
+            </div>
+
+            <h1 class="hero-title font-serif text-gray-900 leading-[0.95] tracking-tighter">
+                {{ article.title }}
+            </h1>
+
+            <div class="flex flex-wrap items-center gap-10 pt-10 border-t border-black/5">
+                <div class="flex items-center space-x-6">
+                    <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-900 font-black text-2xl font-serif">
+                        {{ article.author|slice:":1" }}
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Editor In Chief</p>
+                        <p class="text-xl font-serif italic font-medium text-gray-800">{{ article.author|default:"Redaksi Utama" }}</p>
+                    </div>
+                </div>
+                <div class="ml-auto hidden sm:block text-right">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Publish Date</p>
+                    <p class="text-lg font-serif italic font-medium text-gray-800">{{ article.scraped_at|slice:":10" }}</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Media (Video Player or Hero Image) -->
+        <div class="w-full aspect-video md:aspect-[21/9] overflow-hidden rounded-2xl md:rounded-[40px] shadow-2xl bg-gray-100 border-4 md:border-[16px] border-white relative group">
+            {% if article.all_videos %}
+                <div class="w-full h-full bg-black">
+                    {% if "embed" in article.all_videos.0.url or "youtube" in article.all_videos.0.url %}
+                        <iframe src="{{ article.all_videos.0.url }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                    {% else %}
+                        <video controls class="w-full h-full object-contain" poster="{{ article.image }}">
+                            <source src="{{ article.all_videos.0.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% endif %}
+                </div>
+            {% elif article.image %}
+                <img src="{{ article.image }}" alt="{{ article.title }}" class="editorial-img w-full h-full object-cover">
+            {% else %}
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">NO VISUAL LOADED</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Article Body -->
+        <section class="prose prose-lg md:prose-2xl prose-gray max-w-none space-y-12 leading-relaxed font-serif text-gray-800">
+            {% if article.content %}
+                <div class="first-letter:text-6xl md:first-letter:text-[10rem] first-letter:font-black first-letter:text-red-600 first-letter:mr-4 md:first-letter:mr-10 first-letter:float-left first-letter:leading-none first-letter:mt-2">
+                    {{ article.content|linebreaks }}
+                </div>
+            {% elif article.category == "TOPIK KHUSUS" %}
+                <div class="py-20 md:py-32 px-6 md:px-12 text-center space-y-12 bg-white modular-card border-4 border-dashed border-gray-100">
+                    <div class="inline-flex items-center justify-center w-20 h-20 md:w-28 md:h-28 bg-black text-white rounded-full">
+                        <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-serif font-black text-gray-900 tracking-tighter uppercase">Topic Archive</h2>
+                    <p class="text-gray-500 font-bold text-lg md:text-xl max-w-2xl mx-auto uppercase tracking-widest italic">
+                        "Koleksi warta terintegrasi dari berbagai sumber digital terpercaya."
+                    </p>
+                    <a href="{{ article.url }}" target="_blank" class="inline-block px-12 py-5 bg-black text-white font-black text-[10px] uppercase tracking-[0.4em] rounded-full hover:bg-red-600 transition-all shadow-xl shadow-black/20">
+                        OPEN ORIGINAL
+                    </a>
+                </div>
+            {% else %}
+                <div class="py-20 md:py-32 text-center space-y-12 bg-white modular-card border-4 border-dashed border-gray-100">
+                    <div class="inline-block w-20 h-20 md:w-28 md:h-28 border-[10px] border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                    <h2 class="text-3xl md:text-5xl font-serif font-black text-gray-900 tracking-tighter uppercase">Synchronizing...</h2>
+                    <p class="text-gray-400 font-bold text-lg md:text-xl max-w-sm mx-auto uppercase tracking-widest">Awaiting high-resolution data.</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- STORY MODE VISUALS -->
+        {% if article.all_images %}
+            <div class="pt-20 md:pt-32 space-y-16 md:space-y-24 border-t border-black/5">
+                <h3 class="text-3xl md:text-5xl font-serif font-black text-gray-900 tracking-tighter uppercase">Editorial Documentation</h3>
+                <div class="space-y-16 md:space-y-20">
+                    {% for img in article.all_images %}
+                        <div class="modular-card overflow-hidden group border-8 md:border-[16px] border-white">
+                            <img src="{{ img.url }}" alt="{{ img.alt }}" class="editorial-img w-full h-auto object-cover group-hover:scale-105 transition-transform duration-[2s]">
+                            <div class="p-6 md:p-10 bg-white">
+                                <div class="flex items-start space-x-4 md:space-x-8">
+                                    <span class="text-2xl md:text-4xl font-serif italic text-red-600 opacity-20">{{ forloop.counter }}</span>
+                                    <p class="text-lg md:text-xl font-serif italic text-gray-700 leading-relaxed">"{{ img.alt|default:'Visual documentation from the scene.' }}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </article>
+
+    <!-- RIGHT COLUMN: MODULAR SIDEBAR -->
+    <aside class="space-y-12">
+        <!-- Metadata Identifier Card -->
+        <div class="modular-card p-12 bg-black text-white space-y-12">
+            <div>
+                <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.4em] mb-4">Internal Identifier</p>
+                <p class="text-4xl font-serif font-black tracking-tighter italic">#{{ article.id|slice:":8" }}</p>
+            </div>
+            <div class="space-y-10">
+                <div>
+                    <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] mb-4">Origin Domain</p>
+                    <p class="text-sm font-bold text-blue-400 opacity-60 break-all">{{ article.source_display }}</p>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] mb-4">Topics Covered</p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        {% for tag in article.tags %}
+                            <span class="px-5 py-2.5 bg-white/5 text-white/70 text-[10px] font-black rounded-xl uppercase tracking-widest border border-white/5 hover:bg-white hover:text-black transition-all">#{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="pt-10 border-t border-white/10">
+                    <button onclick="window.print()" class="w-full py-6 bg-white text-black font-black text-[10px] uppercase tracking-[0.5em] rounded-full hover:bg-red-600 hover:text-white transition-all">
+                        PRINT JOURNAL
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Connections -->
+        <div class="modular-card p-12 bg-gray-100 flex flex-col items-center text-center space-y-8">
+            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Keep Connected</h4>
+            <div class="flex space-x-4">
+                <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm text-sm font-black">X</div>
+                <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm text-sm font-black">IG</div>
+                <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm text-sm font-black">YT</div>
+            </div>
+        </div>
+    </aside>
+</div>
+{% endblock %}

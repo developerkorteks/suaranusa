@@ -1,0 +1,5 @@
+2026-03-24 13:52:18 - test - [36mDEBUG[0m - This is a debug message
+2026-03-24 13:52:18 - test - [32mINFO[0m - This is an info message
+2026-03-24 13:52:18 - test - [33mWARNING[0m - This is a warning message
+2026-03-24 13:52:18 - test - [31mERROR[0m - This is an error message
+2026-03-24 13:52:18 - test - [35mCRITICAL[0m - This is a critical message

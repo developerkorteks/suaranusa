@@ -1,0 +1,146 @@
+"""Articles Page - Browse and Search."""
+
+import streamlit as st
+import pandas as pd
+import sys
+from pathlib import Path
+
+# Add utils to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from utils.db_helper import search_articles, get_article
+
+st.set_page_config(page_title="Articles", page_icon="📰", layout="wide")
+
+st.title("📰 Article Browser")
+st.markdown("Search and browse scraped articles")
+
+# Search filters
+st.markdown("### 🔍 Search & Filter")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    query = st.text_input("🔎 Search query", placeholder="Enter keywords...")
+
+with col2:
+    source = st.text_input("🌐 Source domain", placeholder="e.g., news.detik.com")
+
+with col3:
+    limit = st.number_input("📊 Results limit", min_value=10, max_value=500, value=50, step=10)
+
+# Search button
+search_btn = st.button("🔍 Search", type="primary")
+
+st.markdown("---")
+
+# Fetch and display articles
+try:
+    # Get articles
+    articles = search_articles(
+        query=query if query else None,
+        source=source if source else None,
+        category=None,
+        limit=limit
+    )
+    
+    if articles:
+        st.success(f"Found {len(articles)} articles")
+        
+        # Display mode selector
+        view_mode = st.radio(
+            "View mode:",
+            ["📋 Table View", "📄 Card View"],
+            horizontal=True
+        )
+        
+        if view_mode == "📋 Table View":
+            # Table view
+            df = pd.DataFrame([
+                {
+                    'ID': a['id'],
+                    'Title': a['title'][:80] + '...' if a['title'] and len(a['title']) > 80 else a['title'],
+                    'Source': a['source'],
+                    'Quality': f"{a['quality_score']:.2f}" if a.get('quality_score') else 'N/A',
+                    'Date': a.get('publish_date', 'N/A')
+                }
+                for a in articles
+            ])
+            
+            # Display table
+            st.dataframe(
+                df,
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "ID": st.column_config.TextColumn("ID", width="small"),
+                    "Title": st.column_config.TextColumn("Title", width="large"),
+                    "Source": st.column_config.TextColumn("Source", width="medium"),
+                    "Quality": st.column_config.NumberColumn("Quality", format="%.2f"),
+                    "Date": st.column_config.TextColumn("Date", width="medium")
+                }
+            )
+        
+        else:
+            # Card view
+            for i, article in enumerate(articles):
+                with st.expander(f"**{article.get('title', 'No title')}**"):
+                    col1, col2 = st.columns([3, 1])
+                    
+                    with col1:
+                        st.markdown(f"**ID:** `{article.get('id')}`")
+                        st.markdown(f"**Source:** {article.get('source', 'Unknown')}")
+                        
+                        if article.get('description'):
+                            st.markdown(f"**Description:** {article['description'][:200]}...")
+                        
+                        if article.get('url'):
+                            st.markdown(f"**URL:** [{article['url']}]({article['url']})")
+                        
+                        if article.get('tags'):
+                            tags_str = ', '.join(article['tags'][:5])
+                            st.markdown(f"**Tags:** {tags_str}")
+                    
+                    with col2:
+                        st.metric("Quality Score", f"{article.get('quality_score', 0):.2f}")
+                        
+                        if article.get('publish_date'):
+                            st.caption(f"📅 {article['publish_date']}")
+                        
+                        if article.get('author'):
+                            st.caption(f"✍️ {article['author']}")
+        
+        # Pagination info
+        st.markdown("---")
+        st.info(f"Showing {len(articles)} articles. Use filters to refine results.")
+    
+    else:
+        st.warning("No articles found. Try different search criteria or start scraping!")
+        
+        st.info("""
+        **Tips:**
+        - Leave search empty to show all articles
+        - Use source filter to find articles from specific domain
+        - Increase limit to see more results
+        """)
+
+except Exception as e:
+    st.error(f"Error loading articles: {e}")
+    st.info("""
+    **No data available yet.**
+    
+    To see articles:
+    1. Go to 🚀 Scraper page
+    2. Trigger scraping
+    3. Come back here to browse!
+    """)
+
+# Quick stats sidebar
+with st.sidebar:
+    st.markdown("### 📊 Quick Stats")
+    try:
+        from utils.db_helper import get_statistics
+        stats = get_statistics()
+        st.metric("Total Articles", stats['total_articles'])
+        st.metric("Total Domains", len(stats['by_source']))
+    except:
+        st.info("No stats available")

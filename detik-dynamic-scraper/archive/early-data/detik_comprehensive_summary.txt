@@ -1,0 +1,90 @@
+DETIK.COM COMPREHENSIVE SCRAPING SUMMARY
+================================================================================
+
+Timestamp: 2026-03-23T22:36:25.864121
+
+SCRAPER INFO:
+  Total Subdomains: 32
+  Total Channels: 10
+  Total API Endpoints: 7
+  Articles per Channel: 30
+
+STATISTICS:
+  Total Articles: 840
+  Total Videos: 6
+  Total Content: 846
+  Unique IDs: 53
+
+ARTICLES BY CHANNEL:
+  news        :   90 articles
+  finance     :   90 articles
+  sport       :   90 articles
+  hot         :   90 articles
+  inet        :   90 articles
+  travel      :   90 articles
+  food        :   90 articles
+  health      :   90 articles
+  oto         :   60 articles
+  main        :   60 articles
+
+================================================================================
+
+ALL SUBDOMAINS FOUND (32 total):
+  20             : https://20.detik.com
+  adsmart        : https://adsmart.detik.com
+  analytic       : https://analytic.detik.com
+  apicomment     : https://apicomment.detik.com
+  cdnstatic      : https://cdnstatic.detik.com
+  cdnv           : https://cdnv.detik.com
+  collent        : https://collent.detik.com
+  connect        : https://connect.detik.com
+  event          : https://event.detik.com
+  explore-api    : https://explore-api.detik.com
+  finance        : https://finance.detik.com
+  food           : https://food.detik.com
+  foto           : https://foto.detik.com
+  fyb            : https://fyb.detik.com
+  health         : https://health.detik.com
+  hot            : https://hot.detik.com
+  inet           : https://inet.detik.com
+  karir          : https://karir.detik.com
+  kemiri         : https://kemiri.detik.com
+  main           : https://www.detik.com
+  newrevive      : https://newrevive.detik.com
+  news           : https://news.detik.com
+  oto            : https://oto.detik.com
+  pasangmata     : https://pasangmata.detik.com
+  recg           : https://recg.detik.com
+  rech           : https://rech.detik.com
+  rech20         : https://rech20.detik.com
+  rekomendit     : https://rekomendit.detik.com
+  sport          : https://sport.detik.com
+  travel         : https://travel.detik.com
+  vod            : https://vod.detik.com
+  wolipop        : https://wolipop.detik.com
+
+================================================================================
+
+ALL API ENDPOINTS (7 total):
+  recg_detail:
+    https://recg.detik.com/article-recommendation/detail/{user_id}?size={size}&nocache=1&ids={ids}&acctype={acctype}
+
+  recg_index:
+    https://recg.detik.com/article-recommendation/index/{user_id}?size={size}&nocache=1&ids={ids}&acctype={acctype}
+
+  recg_sticky:
+    https://recg.detik.com/article-recommendation/sticky/{user_id}?size={size}&nocache=1&ids={ids}&acctype={acctype}
+
+  recg_wp:
+    https://recg.detik.com/article-recommendation/wp/{user_id}?size={size}&nocache=1&ids={ids}&acctype={acctype}
+
+  rech20_detail:
+    https://rech20.detik.com/article-recommendation/detail/{user_id}
+
+  rech_detail:
+    https://rech.detik.com/article-recommendation/detail/{user_id}?size={size}&nocache=1&ids={ids}&acctype={acctype}
+
+  rech_wp:
+    https://rech.detik.com/article-recommendation/wp/{user_id}?size={size}&nocache=1&ids={ids}&acctype={acctype}
+
+================================================================================

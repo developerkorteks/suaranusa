@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}suaranusa | Premium Editorial{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-editorial: #f7f7f5;
+            --accent-red: #ff3b30;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-editorial);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 80px;
+        }
+        @media (min-width: 1024px) { body { padding-bottom: 0; } }
+        
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--bg-editorial);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .main-canvas {
+            max-width: 1320px;
+            margin: 120px auto 40px;
+            background: var(--bg-editorial);
+            padding: 0 40px;
+            position: relative;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-canvas { margin-top: 100px; padding: 0 24px; }
+        }
+
+        .hero-title {
+            font-size: clamp(28px, 6vw, 64px);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            font-weight: 600;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .highlight-red {
+            background-color: var(--accent-red);
+            color: white;
+        }
+        
+        .brand-logo {
+            letter-spacing: 0.2em;
+            font-weight: 800;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .modular-card {
+            background: #ffffff;
+            border-radius: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .modular-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+        }
+
+        .editorial-img {
+            filter: grayscale(100%) contrast(110%);
+            transition: filter 0.5s ease;
+        }
+        .editorial-img:hover {
+            filter: grayscale(0%) contrast(100%);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            min-width: 200px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            z-index: 100;
+            padding: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .dropdown-trigger:hover .dropdown-menu { display: block; }
+
+        .mobile-dock {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: #999;
+        }
+        .dock-item.active { color: var(--text-primary); }
+        .dock-dot {
+            width: 4px; height: 4px;
+            background: var(--accent-red);
+            border-radius: 2px;
+            margin-top: 4px;
+            opacity: 0;
+        }
+        .dock-item.active .dock-dot { opacity: 1; }
+
+        #mobile-menu, #search-overlay { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* READER MODE STYLES (PREMIUM DARK THEME - ROBUST FIX) */
+        body.reader-active {
+            --bg-editorial: #0a0a0a;
+            background-color: #0a0a0a !important;
+            color: #dddddd !important;
+        }
+        
+        body.reader-active .main-canvas,
+        body.reader-active .sticky-header,
+        body.reader-active #mobile-menu,
+        body.reader-active #search-overlay {
+            background-color: #0a0a0a !important;
+        }
+
+        /* Category Bar Fix */
+        body.reader-active .sticky.top-\[80px\] {
+            background-color: #0a0a0a !important;
+            border-bottom-color: rgba(255,255,255,0.1) !important;
+        }
+        body.reader-active .sticky.top-\[80px\] a {
+            color: #888888 !important;
+        }
+        body.reader-active .sticky.top-\[80px\] a.text-red-600 {
+            color: var(--accent-red) !important;
+            border-bottom-color: var(--accent-red) !important;
+        }
+
+        /* Override Background Utilities */
+        body.reader-active .bg-white,
+        body.reader-active .bg-gray-50,
+        body.reader-active .bg-gray-100,
+        body.reader-active .bg-gray-200,
+        body.reader-active .bg-gray-300,
+        body.reader-active .modular-card {
+            background-color: #161616 !important;
+            color: #dddddd !important;
+        }
+
+        /* Typography Inversion - High Specificity */
+        body.reader-active .text-gray-900,
+        body.reader-active .text-gray-800,
+        body.reader-active .text-black,
+        body.reader-active h1, body.reader-active h2, body.reader-active h3, 
+        body.reader-active h4, body.reader-active h5, body.reader-active h6,
+        body.reader-active .brand-logo,
+        body.reader-active .font-serif,
+        body.reader-active a {
+            color: #ffffff !important;
+        }
+
+        body.reader-active .text-gray-700,
+        body.reader-active .text-gray-600,
+        body.reader-active .text-gray-500 {
+            color: #bbbbbb !important;
+        }
+
+        body.reader-active .text-gray-400,
+        body.reader-active .text-gray-300,
+        body.reader-active .text-white\/30,
+        body.reader-active .text-white\/70,
+        body.reader-active .text-white\/20 {
+            color: #888888 !important;
+        }
+
+        /* Interactive Elements */
+        body.reader-active a:hover {
+            color: var(--accent-red) !important;
+        }
+        body.reader-active .border,
+        body.reader-active .border-t,
+        body.reader-active .border-b,
+        body.reader-active .border-l,
+        body.reader-active .border-black\/5,
+        body.reader-active .border-white\/10 {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Specific Component Fixes */
+        body.reader-active .bg-black {
+            background-color: #222222 !important;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        body.reader-active .highlight-red {
+            background-color: var(--accent-red) !important;
+            color: white !important;
+        }
+        body.reader-active .dropdown-menu {
+            background-color: #1a1a1a !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+
+        /* Tailwind Prose Inversion */
+        body.reader-active .prose {
+            --tw-prose-body: #dddddd;
+            --tw-prose-headings: #ffffff;
+            --tw-prose-links: #ffffff;
+            --tw-prose-bold: #ffffff;
+            --tw-prose-quotes: #eeeeee;
+            --tw-prose-captions: #888888;
+            --tw-prose-hr: #333333;
+        }
+
+        /* Reader Mode Layout Logic: Hide sidebar only on Detail Page */
+        body.reader-active article.space-y-16 + aside { display: none !important; }
+        body.reader-active article.space-y-16 {
+            grid-column: span 3 / span 3 !important;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Reader Toggle Button State */
+        body.reader-active #reader-mode-toggle,
+        body.reader-active #reader-mode-toggle-dropdown {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            border-color: #ffffff !important;
+        }
+        body.reader-active #reader-mode-toggle-mobile {
+            color: var(--accent-red) !important;
+        }
+        body.reader-active .mobile-dock {
+            background: rgba(10, 10, 10, 0.95) !important;
+            border-top-color: rgba(255,255,255,0.1) !important;
+        }
+        body.reader-active .dock-item.active { color: #ffffff !important; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED STICKY HEADER -->
+    <header class="sticky-header">
+        <div class="max-w-[1320px] mx-auto px-4 md:px-10 py-6">
+            <div class="flex items-center justify-between">
+                <!-- LEFT: LIVE INDICATOR -->
+                <div class="flex-1 flex items-center">
+                    <div class="bg-black text-white px-4 py-1.5 rounded-full flex items-center space-x-2">
+                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                        <span class="text-[10px] font-black tracking-widest uppercase">{{ total_count|default:"LIVE" }}</span>
+                    </div>
+                </div>
+
+                <!-- CENTER: BRAND LOGO -->
+                <div class="flex-none text-center px-2 md:px-4">
+                    <a href="{% url 'portal:home' %}" class="brand-logo text-lg md:text-2xl lg:text-3xl text-gray-800 uppercase block leading-none whitespace-nowrap tracking-widest md:tracking-[0.12em]">
+                        suara<span class="italic font-medium">nusa</span>
+                    </a>
+                </div>
+
+                <!-- RIGHT: NAVIGATION & SEARCH -->
+                <div class="flex-1 flex items-center justify-end">
+                    <div class="hidden 2xl:flex space-x-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 items-center mr-8">
+                        {% for cat in nav_categories_main|slice:":3" %}
+                            <a href="{% url 'portal:home' %}?cat={{ cat }}" class="hover:text-black transition-colors {% if selected_category == cat %}text-black border-b border-black pb-1{% endif %}">{{ cat|truncatechars:15 }}</a>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="flex items-center space-x-1 md:space-x-2">
+                        <button id="reader-mode-toggle" class="hidden md:block border border-black px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all whitespace-nowrap mr-2">Reader Mode</button>
+                        
+                        <div class="flex items-center border-l border-black/5 pl-2 md:pl-4 space-x-1">
+                            <!-- MOBILE READER MODE ICON -->
+                            <button id="reader-mode-toggle-mobile" class="md:hidden p-2 text-gray-800 hover:text-red-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            </button>
+
+                            <button id="search-toggle" class="p-2 text-gray-800 hover:text-red-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </button>
+
+                            <!-- DESKTOP DROPDOWN TRIGGER -->
+                            <div class="hidden lg:block relative">
+                                <button id="desktop-menu-toggle" class="p-2 text-gray-800 hover:text-red-600 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path></svg>
+                                </button>
+                                <!-- DROPDOWN CONTENT -->
+                                <div id="desktop-dropdown" class="dropdown-menu right-0 mt-2 w-80 bg-white shadow-2xl rounded-2xl p-8 border border-black/5" style="display: none; z-index: 1000;">
+                                    <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.4em] mb-6">Editorial Sections</p>
+                                    <div class="grid grid-cols-1 gap-4 max-h-[60vh] overflow-y-auto no-scrollbar">
+                                        <a href="{% url 'portal:home' %}" class="font-serif text-xl font-bold text-gray-900 hover:text-red-600 transition-colors">Utama</a>
+                                        {% for cat in nav_categories_all %}
+                                            <a href="{% url 'portal:home' %}?cat={{ cat }}" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">{{ cat }}</a>
+                                        {% endfor %}
+                                    </div>
+                                                                    <div class="mt-8 pt-6 border-t border-black/5">
+                                                                        <button id="reader-mode-toggle-dropdown" class="w-full py-4 bg-black text-white text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-red-600 transition-all">Reader Mode</button>
+                                                                    </div>                                </div>
+                            </div>
+
+                            <!-- MOBILE TOGGLE -->
+                            <button id="menu-toggle" class="lg:hidden p-2 text-gray-800 hover:text-red-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- FULL SCREEN SEARCH OVERLAY -->
+    <div id="search-overlay" class="fixed inset-0 bg-white z-[300] hidden flex flex-col items-center justify-center p-6 bg-opacity-95 backdrop-blur-xl">
+        <button id="search-close" class="absolute top-10 right-10 p-4 text-gray-400 hover:text-black transition-colors">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="w-full max-w-4xl space-y-12">
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em] text-center">Global Search Terminal</p>
+            <form action="{% url 'portal:home' %}" method="GET" class="relative group">
+                <input type="text" name="q" placeholder="TYPE TO DISCOVER..." class="w-full bg-transparent border-b-4 border-black/5 focus:border-red-600 py-8 text-4xl md:text-7xl font-serif font-black tracking-tighter outline-none text-center transition-all placeholder:text-gray-100" autofocus>
+                <div class="mt-8 flex justify-center space-x-4">
+                    <button type="submit" class="px-12 py-4 bg-black text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-full hover:bg-red-600 transition-all shadow-xl">SEARCH ARCHIVE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MOBILE MENU DRAWER -->
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-[200] transform -translate-x-full lg:hidden overflow-y-auto">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-16">
+                <span class="brand-logo text-xl uppercase">suara<span class="italic">nusa</span></span>
+                <button id="menu-close" class="p-2 text-gray-800">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <nav class="space-y-8">
+                <p class="text-[10px] font-black text-gray-300 uppercase tracking-[0.4em] mb-10">Editorial Sections</p>
+                <a href="{% url 'portal:home' %}" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">Utama</a>
+                {% for cat in nav_categories_all %}
+                    <a href="{% url 'portal:home' %}?cat={{ cat }}" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">{{ cat }}</a>
+                {% endfor %}
+            </nav>
+        </div>
+    </div>
+
+    <!-- MOBILE DOCK -->
+    <div class="mobile-dock fixed bottom-0 left-0 right-0 h-20 lg:hidden flex items-center justify-around px-6 z-[150]">
+        <a href="{% url 'portal:home' %}" class="dock-item {% if not selected_category %}active{% endif %}">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span class="uppercase tracking-widest">FEED</span>
+            <div class="dock-dot"></div>
+        </a>
+        <button id="dock-explore" class="dock-item">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            <span class="uppercase tracking-widest">EXPLORE</span>
+            <div class="dock-dot"></div>
+        </button>
+        <button id="dock-search" class="dock-item">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="uppercase tracking-widest">SEARCH</span>
+            <div class="dock-dot"></div>
+        </button>
+        <a href="{% url 'portal:home' %}" class="dock-item">
+            <div class="relative mb-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            </div>
+            <span class="uppercase tracking-widest">LATEST</span>
+            <div class="dock-dot"></div>
+        </a>
+    </div>
+
+    <main class="main-canvas">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="max-w-[1320px] mx-auto px-10 py-20 border-t border-black/5 mt-20 text-center">
+        <span class="brand-logo text-xl uppercase">suara<span class="italic">nusa</span></span>
+        <p class="mt-8 text-gray-500 text-sm italic">&copy; 2026 suaranusa magazine</p>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const dockExplore = document.getElementById('dock-explore');
+        const menuClose = document.getElementById('menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        const searchToggle = document.getElementById('search-toggle');
+        const dockSearch = document.getElementById('dock-search');
+        const searchClose = document.getElementById('search-close');
+        const searchOverlay = document.getElementById('search-overlay');
+
+        // NEW: DESKTOP DROPDOWN LOGIC
+        const desktopMenuToggle = document.getElementById('desktop-menu-toggle');
+        const desktopDropdown = document.getElementById('desktop-dropdown');
+
+        const toggleDesktopDropdown = (e) => {
+            e.stopPropagation();
+            const isVisible = desktopDropdown.style.display === 'block';
+            desktopDropdown.style.display = isVisible ? 'none' : 'block';
+        };
+
+        if(desktopMenuToggle) desktopMenuToggle.addEventListener('click', toggleDesktopDropdown);
+
+        // NEW: READER MODE LOGIC
+        const readerToggle = document.getElementById('reader-mode-toggle');
+        const readerToggleMobile = document.getElementById('reader-mode-toggle-mobile');
+        const readerToggleDropdown = document.getElementById('reader-mode-toggle-dropdown');
+        
+        const applyReaderMode = (isActive) => {
+            if (isActive) {
+                document.body.classList.add('reader-active');
+                if(readerToggle) readerToggle.innerText = 'Normal Mode';
+                if(readerToggleDropdown) readerToggleDropdown.innerText = 'Normal Mode';
+            } else {
+                document.body.classList.remove('reader-active');
+                if(readerToggle) readerToggle.innerText = 'Reader Mode';
+                if(readerToggleDropdown) readerToggleDropdown.innerText = 'Reader Mode';
+            }
+        };
+
+        // Check preference
+        const isReaderActive = localStorage.getItem('readerMode') === 'true';
+        applyReaderMode(isReaderActive);
+
+        const handleToggle = () => {
+            const active = !document.body.classList.contains('reader-active');
+            applyReaderMode(active);
+            localStorage.setItem('readerMode', active);
+        };
+
+        if(readerToggle) readerToggle.addEventListener('click', handleToggle);
+        if(readerToggleMobile) readerToggleMobile.addEventListener('click', handleToggle);
+        if(readerToggleDropdown) readerToggleDropdown.addEventListener('click', handleToggle);
+
+        // Close dropdown when clicking anywhere else
+        document.addEventListener('click', (e) => {
+            if (desktopDropdown && !desktopDropdown.contains(e.target) && e.target !== desktopMenuToggle) {
+                desktopDropdown.style.display = 'none';
+            }
+        });
+
+        const openMenu = () => { mobileMenu.style.transform = 'translateX(0)'; document.body.style.overflow = 'hidden'; };
+        const closeMenu = () => { mobileMenu.style.transform = 'translateX(-100%)'; document.body.style.overflow = 'auto'; };
+        
+        const openSearch = () => { searchOverlay.classList.remove('hidden'); document.body.style.overflow = 'hidden'; searchOverlay.querySelector('input').focus(); };
+        const closeSearch = () => { searchOverlay.classList.add('hidden'); document.body.style.overflow = 'auto'; };
+
+        if(menuToggle) menuToggle.addEventListener('click', openMenu);
+        if(dockExplore) dockExplore.addEventListener('click', openMenu);
+        if(menuClose) menuClose.addEventListener('click', closeMenu);
+        
+        if(searchToggle) searchToggle.addEventListener('click', openSearch);
+        if(dockSearch) dockSearch.addEventListener('click', openSearch);
+        if(searchClose) searchClose.addEventListener('click', closeSearch);
+        
+        // Close on ESC
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') { closeMenu(); closeSearch(); }
+        });
+    </script>
+</body>
+</html>

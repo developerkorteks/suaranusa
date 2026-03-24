@@ -1,0 +1,610 @@
+"""
+Database Storage - Step 6
+
+SQLite-based storage with:
+- Article metadata storage
+- Query capabilities
+- Export to JSON
+- Deduplication
+- Statistics
+
+Author: Dynamic Scraper
+Date: 2026-03-23
+"""
+
+import json
+import sqlite3
+from typing import Dict, List, Optional, Any
+from datetime import datetime
+from pathlib import Path
+import sys
+import os
+
+# FIX: Simplified - use print for dashboard compatibility
+# Logger not critical for dashboard functionality
+try:
+    from utils.logger import setup_logger
+
+    logger = setup_logger(__name__)
+except ImportError:
+    # Fallback: create dummy logger
+    class DummyLogger:
+        def info(self, msg):
+            print(f"INFO: {msg}")
+
+        def warning(self, msg):
+            print(f"WARNING: {msg}")
+
+        def error(self, msg):
+            print(f"ERROR: {msg}")
+
+        def debug(self, msg):
+            pass
+
+    logger = DummyLogger()
+
+
+class Database:
+    """SQLite database for storing scraped content."""
+
+    def __init__(self, db_path: str = "data/scraper.db"):
+        """
+        Initialize database connection.
+
+        Args:
+            db_path: Path to SQLite database file
+        """
+        self.db_path = db_path
+
+        # Ensure directory exists
+        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+
+        # Initialize connection
+        self.conn = None
+        self.connect()
+        self.create_tables()
+
+    def connect(self):
+        """Connect to database."""
+        # FIX: check_same_thread=False is required for multi-threaded apps like Streamlit/FastAPI
+        self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+        self.conn.row_factory = sqlite3.Row  # Return rows as dictionaries
+
+    def close(self):
+        """Close database connection."""
+        if self.conn:
+            self.conn.close()
+
+    # FIX BUG #4: Add context manager support (prevents connection leak)
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - ensures connection is closed."""
+        self.close()
+        return False
+
+    def create_tables(self):
+        """Create database tables."""
+        cursor = self.conn.cursor()
+
+        # Articles table
+        # FIX BUG #1: Add UNIQUE constraint on URL, generate ID if NULL
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS articles (
+                id TEXT PRIMARY KEY NOT NULL,
+                title TEXT NOT NULL,
+                url TEXT UNIQUE NOT NULL,
+                image TEXT,
+                category TEXT,
+                publish_date TEXT,
+                description TEXT,
+                content TEXT,
+                author TEXT,
+                source TEXT,
+                source_url TEXT,
+                quality_score REAL,
+                scraped_at TEXT,
+                updated_at TEXT,
+                metadata TEXT
+            )
+        """)
+
+        # Tags table (many-to-many)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tags (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE NOT NULL
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS article_tags (
+                article_id TEXT,
+                tag_id INTEGER,
+                FOREIGN KEY (article_id) REFERENCES articles(id),
+                FOREIGN KEY (tag_id) REFERENCES tags(id),
+                PRIMARY KEY (article_id, tag_id)
+            )
+        """)
+
+        # Scraping sessions table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS scraping_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                started_at TEXT,
+                completed_at TEXT,
+                total_articles INTEGER,
+                success_count INTEGER,
+                error_count INTEGER,
+                source TEXT,
+                metadata TEXT
+            )
+        """)
+
+        # Create indexes
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_articles_source ON articles(source)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_articles_category ON articles(category)"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_articles_date ON articles(publish_date)"
+        )
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_tags_name ON tags(name)")
+
+        self.conn.commit()
+
+    def insert_article(self, article: Dict[str, Any]) -> bool:
+        """
+        Insert or update article.
+
+        Args:
+            article: Article data dictionary
+
+        Returns:
+            True if successful
+        """
+        try:
+            cursor = self.conn.cursor()
+
+            # FIX BUG #1: Generate ID if NULL
+            article_id = article.get("id")
+            article_url = article.get("url")
+
+            # Validation: URL is required
+            if not article_url or not str(article_url).strip():
+                logger.warning("Skipping article: URL is required")
+                return False
+
+            article_url = str(article_url).strip()
+
+            # Generate ID from URL if not present
+            if not article_id:
+                # Extract ID from URL pattern /d-123456/
+                import re
+
+                match = re.search(r"/d-(\d+)/", article_url)
+                if match:
+                    article_id = match.group(1)
+                else:
+                    # Generate ID from URL hash
+                    import hashlib
+
+                    article_id = hashlib.md5(article_url.encode()).hexdigest()[:12]
+
+            # Extract tags
+            tags = article.get("tags", [])
+
+            # Prepare metadata (store raw_data, images, videos)
+            metadata = article.get("metadata") or {}
+            if isinstance(metadata, str):
+                try:
+                    metadata = json.loads(metadata)
+                except:
+                    metadata = {}
+            
+            if "raw_data" in article:
+                metadata["raw_data"] = article["raw_data"]
+
+            # NEW: Store images and videos in metadata
+            if "images" in article and article["images"]:
+                metadata["images"] = article["images"]
+            if "videos" in article and article["videos"]:
+                metadata["videos"] = article["videos"]
+            if "has_media" in article:
+                metadata["has_media"] = article["has_media"]
+
+            # FIX BUG #2: Better UPSERT - check if exists first
+            cursor.execute("SELECT id FROM articles WHERE url = ?", (article_url,))
+            existing = cursor.fetchone()
+
+            if existing:
+                # Update existing article
+                cursor.execute(
+                    """
+                    UPDATE articles SET
+                        id = ?,
+                        title = ?,
+                        image = ?,
+                        category = ?,
+                        publish_date = ?,
+                        description = ?,
+                        content = ?,
+                        author = ?,
+                        source = ?,
+                        source_url = ?,
+                        quality_score = ?,
+                        updated_at = ?,
+                        metadata = ?
+                    WHERE url = ?
+                """,
+                    (
+                        article_id,
+                        article.get("title"),
+                        article.get("image"),
+                        article.get("category"),
+                        article.get("publish_date"),
+                        article.get("description"),
+                        article.get("content"),
+                        article.get("author"),
+                        article.get("source"),
+                        article.get("source_url"),
+                        article.get("quality_score"),
+                        datetime.utcnow().isoformat(),
+                        json.dumps(metadata) if metadata else None,
+                        article_url,
+                    ),
+                )
+            else:
+                # Insert new article
+                cursor.execute(
+                    """
+                    INSERT INTO articles (
+                        id, title, url, image, category, publish_date,
+                        description, content, author, source, source_url,
+                        quality_score, scraped_at, updated_at, metadata
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                    (
+                        article_id,
+                        article.get("title"),
+                        article_url,
+                        article.get("image"),
+                        article.get("category"),
+                        article.get("publish_date"),
+                        article.get("description"),
+                        article.get("content"),
+                        article.get("author"),
+                        article.get("source"),
+                        article.get("source_url"),
+                        article.get("quality_score"),
+                        article.get("scraped_at"),
+                        datetime.utcnow().isoformat(),
+                        json.dumps(metadata) if metadata else None,
+                    ),
+                )
+
+            # Insert tags
+            if tags:
+                self._insert_tags(article_id, tags)
+
+            self.conn.commit()
+            return True
+
+        except Exception as e:
+            logger.error(f"Error inserting article: {e}", exc_info=True)
+            self.conn.rollback()
+            return False
+
+    def _insert_tags(self, article_id: str, tags: List[str]):
+        """Insert tags for an article."""
+        cursor = self.conn.cursor()
+
+        for tag_name in tags:
+            if not tag_name:
+                continue
+
+            # Insert tag if not exists
+            cursor.execute("INSERT OR IGNORE INTO tags (name) VALUES (?)", (tag_name,))
+
+            # Get tag ID
+            cursor.execute("SELECT id FROM tags WHERE name = ?", (tag_name,))
+            tag_id = cursor.fetchone()[0]
+
+            # Link article to tag
+            cursor.execute(
+                "INSERT OR IGNORE INTO article_tags (article_id, tag_id) VALUES (?, ?)",
+                (article_id, tag_id),
+            )
+
+    def insert_batch(self, articles: List[Dict[str, Any]]) -> int:
+        """
+        Insert multiple articles.
+
+        Args:
+            articles: List of article dictionaries
+
+        Returns:
+            Number of successfully inserted articles
+        """
+        success_count = 0
+
+        for article in articles:
+            if self.insert_article(article):
+                success_count += 1
+
+        return success_count
+
+    def get_article(self, article_id: str) -> Optional[Dict[str, Any]]:
+        """Get article by ID."""
+        cursor = self.conn.cursor()
+
+        cursor.execute("SELECT * FROM articles WHERE id = ?", (article_id,))
+        row = cursor.fetchone()
+
+        if row:
+            article = dict(row)
+
+            # Load tags
+            article["tags"] = self._get_article_tags(article_id)
+
+            # Parse metadata
+            if article.get("metadata"):
+                try:
+                    article["metadata"] = json.loads(article["metadata"])
+                except (json.JSONDecodeError, ValueError, TypeError):
+                    # FIX BUG #6: Specific exceptions instead of bare except
+                    # Invalid JSON in metadata, keep as string
+                    pass
+
+            return article
+
+        return None
+
+    def _get_article_tags(self, article_id: str) -> List[str]:
+        """Get tags for an article."""
+        cursor = self.conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT t.name FROM tags t
+            JOIN article_tags at ON t.id = at.tag_id
+            WHERE at.article_id = ?
+        """,
+            (article_id,),
+        )
+
+        return [row[0] for row in cursor.fetchall()]
+
+    def search_articles(
+        self,
+        query: Optional[str] = None,
+        source: Optional[str] = None,
+        category: Optional[str] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> List[Dict[str, Any]]:
+        """
+        Search articles with filters.
+
+        Args:
+            query: Search query (searches title and description)
+            source: Filter by source
+            category: Filter by category
+            limit: Maximum results
+            offset: Pagination offset
+
+        Returns:
+            List of article dictionaries
+        """
+        cursor = self.conn.cursor()
+
+        sql = "SELECT * FROM articles WHERE 1=1"
+        params = []
+
+        if query:
+            sql += " AND (title LIKE ? OR description LIKE ?)"
+            params.extend([f"%{query}%", f"%{query}%"])
+
+        if source:
+            sql += " AND source = ?"
+            params.append(source)
+
+        if category:
+            sql += " AND category = ?"
+            params.append(category)
+
+        sql += " ORDER BY scraped_at DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+
+        cursor.execute(sql, params)
+
+        # FIX BUG #5: Load all tags in one query (avoid N+1)
+        articles = []
+        article_ids = []
+
+        for row in cursor.fetchall():
+            article = dict(row)
+            article["tags"] = []  # Will be populated below
+            articles.append(article)
+            article_ids.append(article["id"])
+
+        # Bulk load tags for all articles
+        if article_ids:
+            self._load_tags_bulk(articles, article_ids)
+
+        return articles
+
+    def _load_tags_bulk(self, articles: List[Dict], article_ids: List[str]):
+        """
+        Load tags for multiple articles in one query (fixes N+1 problem).
+
+        Args:
+            articles: List of article dictionaries to populate
+            article_ids: List of article IDs
+        """
+        cursor = self.conn.cursor()
+
+        # Create placeholders for IN clause
+        placeholders = ",".join("?" * len(article_ids))
+
+        # Single query to get all tags
+        cursor.execute(
+            f"""
+            SELECT at.article_id, t.name
+            FROM article_tags at
+            JOIN tags t ON at.tag_id = t.id
+            WHERE at.article_id IN ({placeholders})
+        """,
+            article_ids,
+        )
+
+        # Group tags by article_id
+        tags_by_article = {}
+        for row in cursor.fetchall():
+            article_id, tag_name = row
+            if article_id not in tags_by_article:
+                tags_by_article[article_id] = []
+            tags_by_article[article_id].append(tag_name)
+
+        # Populate articles with tags
+        for article in articles:
+            article["tags"] = tags_by_article.get(article["id"], [])
+
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get database statistics."""
+        cursor = self.conn.cursor()
+
+        # Total articles
+        cursor.execute("SELECT COUNT(*) FROM articles")
+        total_articles = cursor.fetchone()[0]
+
+        # By source
+        cursor.execute("SELECT source, COUNT(*) FROM articles GROUP BY source")
+        by_source = {row[0]: row[1] for row in cursor.fetchall()}
+
+        # By category
+        cursor.execute("SELECT category, COUNT(*) FROM articles GROUP BY category")
+        by_category = {row[0]: row[1] for row in cursor.fetchall()}
+
+        # Average quality score
+        cursor.execute("SELECT AVG(quality_score) FROM articles")
+        avg_quality = cursor.fetchone()[0] or 0.0
+
+        # Total tags
+        cursor.execute("SELECT COUNT(*) FROM tags")
+        total_tags = cursor.fetchone()[0]
+
+        return {
+            "total_articles": total_articles,
+            "by_source": by_source,
+            "by_category": by_category,
+            "average_quality_score": round(avg_quality, 2),
+            "total_tags": total_tags,
+        }
+
+    def export_to_json(
+        self, output_file: str, filters: Optional[Dict[str, Any]] = None
+    ) -> int:
+        """
+        Export articles to JSON file.
+
+        Args:
+            output_file: Output JSON file path
+            filters: Optional filters (source, category, etc.)
+
+        Returns:
+            Number of exported articles
+        """
+        # Get articles with filters
+        articles = self.search_articles(
+            query=filters.get("query") if filters else None,
+            source=filters.get("source") if filters else None,
+            category=filters.get("category") if filters else None,
+            limit=filters.get("limit", 10000) if filters else 10000,
+        )
+
+        # Export
+        export_data = {
+            "exported_at": datetime.utcnow().isoformat(),
+            "total_articles": len(articles),
+            "filters": filters or {},
+            "articles": articles,
+        }
+
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(export_data, f, indent=2, ensure_ascii=False)
+
+        return len(articles)
+
+    def clear_all(self):
+        """Clear all data from database."""
+        cursor = self.conn.cursor()
+        cursor.execute("DELETE FROM article_tags")
+        cursor.execute("DELETE FROM articles")
+        cursor.execute("DELETE FROM tags")
+        cursor.execute("DELETE FROM scraping_sessions")
+        self.conn.commit()
+
+
+if __name__ == "__main__":
+    # Quick test
+    print("🧪 Testing Database Storage...")
+
+    # Create test database
+    db = Database("data/test_scraper.db")
+    db.clear_all()
+
+    # Test 1: Insert article
+    print("\n1️⃣ Test: Insert article")
+    article = {
+        "id": "8412424",
+        "title": "Test Article",
+        "url": "https://news.detik.com/test",
+        "category": "news",
+        "tags": ["tag1", "tag2", "tag3"],
+        "quality_score": 0.85,
+        "scraped_at": datetime.utcnow().isoformat(),
+    }
+
+    success = db.insert_article(article)
+    print(f"  ✅ Insert successful: {success}")
+
+    # Test 2: Retrieve article
+    print("\n2️⃣ Test: Retrieve article")
+    retrieved = db.get_article("8412424")
+    print(f"  ✅ Retrieved: {retrieved['title']}")
+    print(f"     Tags: {retrieved['tags']}")
+
+    # Test 3: Batch insert
+    print("\n3️⃣ Test: Batch insert")
+    batch = [
+        {
+            "id": f"841242{i}",
+            "title": f"Article {i}",
+            "url": f"https://test.com/{i}",
+            "tags": [f"tag{i}"],
+        }
+        for i in range(5, 10)
+    ]
+
+    count = db.insert_batch(batch)
+    print(f"  ✅ Inserted {count}/{len(batch)} articles")
+
+    # Test 4: Statistics
+    print("\n4️⃣ Test: Statistics")
+    stats = db.get_statistics()
+    print(f"  ✅ Stats:")
+    print(f"     - Total articles: {stats['total_articles']}")
+    print(f"     - Total tags: {stats['total_tags']}")
+
+    # Test 5: Export
+    print("\n5️⃣ Test: Export to JSON")
+    exported = db.export_to_json("data/test_export.json")
+    print(f"  ✅ Exported {exported} articles")
+
+    db.close()
+    print("\n✅ All tests passed!")

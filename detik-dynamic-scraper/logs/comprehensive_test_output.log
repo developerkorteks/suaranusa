@@ -1,0 +1,116 @@
+🧪 Comprehensive Scraper Test - All Subdomains
+======================================================================
+
+📊 Testing with 15 main content subdomains
+   This will take ~30-60 seconds...
+
+🚀 Starting comprehensive scrape of 15 subdomains
+   Target: 20 articles per subdomain
+   Max workers: 5
+
+📊 Scraping www.detik.com...
+📊 Scraping news.detik.com...
+📊 Scraping finance.detik.com...
+📊 Scraping sport.detik.com...
+📊 Scraping hot.detik.com...
+  ✅ Homepage: 54 articles
+  ✅ Total: 54 articles from sport.detik.com
+📊 Scraping inet.detik.com...
+  ✅ Homepage: 59 articles
+  ✅ Total: 59 articles from www.detik.com
+📊 Scraping travel.detik.com...
+  ✅ Homepage: 36 articles
+  ✅ Total: 36 articles from news.detik.com
+📊 Scraping food.detik.com...
+  ✅ Homepage: 51 articles
+  ✅ Total: 51 articles from finance.detik.com
+📊 Scraping health.detik.com...
+  ✅ Homepage: 40 articles
+  ✅ Total: 40 articles from travel.detik.com
+📊 Scraping oto.detik.com...
+  ✅ Homepage: 1 articles
+  ✅ Homepage: 1 articles
+  ✅ Homepage: 64 articles
+  ✅ Total: 64 articles from oto.detik.com
+  ✅ Homepage: 57 articles
+  ✅ Total: 57 articles from health.detik.com
+📊 Scraping wolipop.detik.com...
+📊 Scraping 20.detik.com...
+  ✅ Homepage: 89 articles
+  ✅ Total: 89 articles from 20.detik.com
+📊 Scraping edu.detik.com...
+  ✅ Homepage: 59 articles
+  ✅ Total: 59 articles from hot.detik.com
+📊 Scraping foto.detik.com...
+  ✅ Homepage: 4 articles
+  ✅ API: 14 articles
+  ✅ Total: 15 articles from inet.detik.com
+📊 Scraping karir.detik.com...
+  ⚠️  Error on attempt 1/3: [Errno -5] No address associated with hostname
+  ✅ Total: 1 articles from food.detik.com
+  ✅ Homepage: 1 articles
+  ⚠️  Error on attempt 2/3: [Errno -2] Name or service not known
+  ✅ Homepage: 10 articles
+  ⚠️  Error on attempt 3/3: [Errno -2] Name or service not known
+  ❌ Failed to scrape https://edu.detik.com
+  ⚠️  Error extracting from meta tags: [Errno -2] Name or service not known
+  ✅ Total: 4 articles from wolipop.detik.com
+  ✅ Total: 1 articles from karir.detik.com
+  ✅ API: 1 articles
+  ✅ Total: 1 articles from edu.detik.com
+  ✅ Total: 10 articles from foto.detik.com
+
+======================================================================
+📊 SCRAPING RESULTS
+======================================================================
+
+✅ Subdomains Scraped: 15
+✅ Total Articles: 541
+
+📈 Articles per Subdomain:
+  - 20.detik.com              :  89 articles
+  - oto.detik.com             :  64 articles
+  - www.detik.com             :  59 articles
+  - hot.detik.com             :  59 articles
+  - health.detik.com          :  57 articles
+  - sport.detik.com           :  54 articles
+  - finance.detik.com         :  51 articles
+  - travel.detik.com          :  40 articles
+  - news.detik.com            :  36 articles
+  - inet.detik.com            :  15 articles
+  - foto.detik.com            :  10 articles
+  - wolipop.detik.com         :   4 articles
+  - food.detik.com            :   1 articles
+  - edu.detik.com             :   1 articles
+  - karir.detik.com           :   1 articles
+
+💾 Storing in database...
+  ✅ Stored 541 articles in database
+
+📈 Scraping Terpopuler pages...
+
+📈 Scraping Terpopuler pages...
+  ✅ terpopuler: 2 articles
+  ✅ Scraped 2 articles from Terpopuler
+
+======================================================================
+📊 DATABASE STATISTICS
+======================================================================
+  - Total articles in DB: 543
+  - Total tags: 103
+  - Average quality: 0.48
+  - By source: 16 sources
+  - By category: 1 categories
+
+💾 Exporting to JSON...
+  ✅ Exported 543 articles
+
+======================================================================
+✅ COMPREHENSIVE TEST PASSED!
+
+🎉 Summary:
+   - 15 subdomains scraped
+   - 541 articles collected
+   - 543 articles in database
+   - 2 trending articles
+   - 543 articles exported

@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}suaranusa | Premium Editorial Feed{% endblock %}
+
+{% block content %}
+<!-- NEW: SEARCH RESULTS INDICATOR -->
+{% if search_query %}
+<div class="mb-12 border-l-4 border-red-600 pl-8 py-4">
+    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em] mb-2">Search Terminal Results</p>
+    <h2 class="text-4xl md:text-6xl font-serif font-black text-gray-900 tracking-tighter italic">"{{ search_query }}"</h2>
+    <p class="mt-4 text-xs font-bold text-gray-400 uppercase tracking-widest">{{ total_count }} Matches found in archive</p>
+    <a href="{% url 'portal:home' %}" class="inline-block mt-8 text-[9px] font-black text-red-600 uppercase tracking-[0.3em] border-b border-red-600 pb-1 hover:text-black hover:border-black transition-all">Clear Search</a>
+</div>
+{% endif %}
+
+<!-- NEW: HORIZONTAL CATEGORY SCROLL (MOBILE ONLY & STICKY) -->
+<div class="lg:hidden sticky top-[80px] -mx-6 mb-12 px-6 overflow-x-auto no-scrollbar flex items-center space-x-8 border-b border-black/5 pt-3 pb-4 bg-[var(--bg-editorial)] z-40">
+    <a href="{% url 'portal:home' %}" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] {% if not selected_category %}text-red-600 border-b-2 border-red-600 pb-1{% else %}text-gray-400{% endif %}">
+        ALL STORY
+    </a>
+    {% for cat in categories %}
+        <a href="{% url 'portal:home' %}?cat={{ cat }}" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] {% if selected_category == cat %}text-red-600 border-b-2 border-red-600 pb-1{% else %}text-gray-400{% endif %}">
+            {{ cat }}
+        </a>
+    {% endfor %}
+</div>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 lg:gap-24 relative">
+    
+    <!-- LEFT COLUMN: HERO ARTICLE (THE STORY) -->
+    <section class="space-y-12">
+        {% if articles %}
+            {% with hero=articles.0 %}
+            <article class="relative group border-b border-black/5 pb-20">
+                <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-12 mb-16">
+                    <!-- Title & Lead -->
+                    <div class="space-y-12">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="px-4 py-1.5 bg-black text-white text-[9px] font-black uppercase tracking-[0.2em] rounded-full">
+                                {{ hero.category }}
+                            </span>
+                            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                Premium Story
+                            </span>
+                        </div>
+                        <h1 class="hero-title font-serif text-gray-900 group-hover:text-red-600 transition-colors">
+                            <a href="{% url 'portal:article_detail' hero.id %}">
+                                {{ hero.title|truncatewords:15 }}
+                            </a>
+                        </h1>
+                        <p class="text-xl text-gray-500 leading-relaxed font-light italic">
+                            Jurnalistik mendalam dari seluruh penjuru negeri, menyajikan fakta dengan perspektif yang berbeda dan visual yang mendalam.
+                        </p>
+                    </div>
+
+                    <!-- Hero Meta (Right Aligned) -->
+                    <div class="text-left md:text-right space-y-12 border-l border-black/5 pl-8 md:pl-12">
+                        <div class="space-y-10 pt-10">
+                            <div>
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Written By</p>
+                                <p class="text-lg font-serif italic font-medium text-gray-800">{{ hero.author|default:"Redaksi Utama" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Published</p>
+                                <p class="text-sm font-bold text-gray-800 uppercase tracking-widest">{{ hero.date }}</p>
+                            </div>
+                            <div class="flex flex-col items-start md:items-end gap-6 pt-10">
+                                <button class="w-12 h-12 rounded-full border border-black/5 flex items-center justify-center hover:bg-black hover:text-white transition-all shadow-sm">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                                </button>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">LISTEN STORY</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Image (Full Width) -->
+                <div class="relative w-full aspect-video md:aspect-[21/9] overflow-hidden rounded-2xl md:rounded-[24px] bg-gray-200 shadow-xl md:shadow-2xl">
+                    {% if hero.image %}
+                        <img src="{{ hero.image }}" alt="{{ hero.title }}" class="editorial-img w-full h-full object-cover">
+                        {% if hero.is_video %}
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-all">
+                                <div class="w-16 h-16 md:w-20 md:h-20 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform">
+                                    <svg class="w-8 h-8 md:w-10 md:h-10 text-red-600 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-gray-300">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">NO VISUAL AVAILABLE</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </article>
+            {% endwith %}
+
+            <!-- Remaining Large Grid (Below Hero) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 pt-10 md:pt-16">
+                {% for article in articles|slice:"1:5" %}
+                <article class="group">
+                    <div class="aspect-video md:aspect-[4/3] overflow-hidden rounded-xl md:rounded-[20px] bg-gray-200 mb-6 md:mb-8 relative shadow-md group-hover:shadow-xl transition-all">
+                        {% if article.image %}
+                            <img src="{{ article.image }}" alt="{{ article.title }}" class="editorial-img w-full h-full object-cover">
+                            {% if article.is_video %}
+                                <div class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-all">
+                                    <div class="w-12 h-12 md:w-14 md:h-14 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                                        <svg class="w-5 h-5 md:w-6 md:h-6 text-red-600 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="w-full h-full bg-gray-300"></div>
+                        {% endif %}
+                    </div>
+                    <p class="text-[9px] font-black text-red-500 uppercase tracking-[0.3em] mb-3 md:mb-4">{{ article.category }}</p>
+                    <h2 class="text-2xl md:text-3xl font-serif font-semibold text-gray-900 leading-tight group-hover:underline transition-all">
+                        <a href="{% url 'portal:article_detail' article.id %}">{{ article.title }}</a>
+                    </h2>
+                    <p class="text-sm text-gray-500 mt-4 md:mt-6 leading-relaxed line-clamp-2">
+                        Analisa mendalam terkait peristiwa hari ini dengan fokus pada fakta dan keaslian informasi yang terverifikasi secara global.
+                    </p>
+                </article>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="py-40 text-center">
+                <span class="hero-title opacity-10">NO DATA FOUND</span>
+            </div>
+        {% endif %}
+    </section>
+
+    <!-- RIGHT COLUMN: MODULAR STACK (THE DASHBOARD) -->
+    <aside class="space-y-10">
+        <!-- Feature Card 1: DRAW INSPIRATION -->
+        <div class="modular-card p-10 bg-white group">
+            <div class="flex justify-between items-start mb-10">
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Inspiration</span>
+                <span class="w-8 h-8 rounded-full border border-black/5 flex items-center justify-center text-[10px] font-bold">I</span>
+            </div>
+            <h3 class="text-3xl font-serif font-bold italic text-gray-800 leading-tight mb-8">"Simplicity is the ultimate sophistication."</h3>
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Leonardo Da Vinci</p>
+            <div class="mt-12 h-px bg-black/5 w-full"></div>
+            <div class="mt-8 flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-gray-300">
+                <span>Reading Time</span>
+                <span>4 Min</span>
+            </div>
+        </div>
+
+        <!-- Latest Articles List Card -->
+        <div class="modular-card p-10 bg-white">
+            <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-10 pb-6 border-b border-black/5">The Feed Queue</h4>
+            <div class="space-y-12">
+                {% for article in articles|slice:"5:12" %}
+                <div class="group cursor-pointer">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">{{ article.category }}</p>
+                    <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
+                        <a href="{% url 'portal:article_detail' article.id %}">{{ article.title }}</a>
+                    </h5>
+                    <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">{{ article.date }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Data/Stats Grid Card (DNA Point 6.D) -->
+        <div class="modular-card p-10 bg-white border border-black/5 shadow-sm">
+            <h4 class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-12">Data Insights</h4>
+            <div class="grid grid-cols-2 gap-y-12 gap-x-10">
+                <div class="space-y-3">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Sources</p>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-4xl font-serif font-black text-gray-900 leading-none">{{ category_count }}</span>
+                        <span class="text-[10px] font-black text-green-500 uppercase">+12%</span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Verified</p>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-4xl font-serif font-black text-gray-900 leading-none">98%</span>
+                        <span class="text-[10px] font-black text-blue-500 uppercase">Stable</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-black/5">
+                <div class="flex justify-between items-center">
+                    <span class="text-[9px] font-black text-gray-300 uppercase tracking-widest">Global Status</span>
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media Modular Card -->
+        <div class="modular-card p-10 bg-gray-50">
+            <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-10 text-center">Follow Island</h4>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="aspect-square rounded-2xl bg-white flex items-center justify-center hover:bg-black hover:text-white transition-all shadow-sm cursor-pointer text-sm font-bold">X</div>
+                <div class="aspect-square rounded-2xl bg-white flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm cursor-pointer text-sm font-bold">IG</div>
+                <div class="aspect-square rounded-2xl bg-white flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm cursor-pointer text-sm font-bold">YT</div>
+                <div class="aspect-square rounded-2xl bg-white flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm cursor-pointer text-sm font-bold">FB</div>
+            </div>
+        </div>
+    </aside>
+</div>
+{% endblock %}

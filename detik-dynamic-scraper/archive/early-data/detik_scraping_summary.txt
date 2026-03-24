@@ -1,0 +1,50 @@
+DETIK.COM API SCRAPING SUMMARY
+============================================================
+
+Timestamp: 2026-03-23T22:13:43.226100
+
+STATISTICS:
+  - Total articles collected: 573
+  - Unique article IDs: 435
+  - Sources: 8
+  - Channels scraped: 12
+
+SOURCES BREAKDOWN:
+  - recommendation_api: 100 articles
+  - recommendation20_api: 50 articles
+  - terpopuler_all: 20 articles
+  - terpopuler_1d: 20 articles
+  - terpopuler_3d: 20 articles
+  - terpopuler_7d: 20 articles
+  - terpopuler_30d: 20 articles
+
+  channels:
+    - main: 41 articles
+    - news: 15 articles
+    - finance: 46 articles
+    - sport: 14 articles
+    - hot: 58 articles
+    - inet: 0 articles
+    - travel: 36 articles
+    - food: 0 articles
+    - health: 54 articles
+    - wolipop: 0 articles
+    - oto: 59 articles
+    - edu: 0 articles
+
+============================================================
+
+API ENDPOINTS DISCOVERED:
+  - https://recg.detik.com/article-recommendation/wp/{user_id}?size={size}&nocache=1&ids=undefined&acctype=acc-detikcom
+  - https://recg20.detik.com/article-recommendation/wp/{user_id}?size={size}
+  - https://www.detik.com/terpopuler
+  - https://www.detik.com/terpopuler/{days}
+
+============================================================
+
+DYNAMIC ID PATTERNS:
+  - Article ID format: d-{8 digit number}
+  - Example: d-8412424, d-8411977, etc.
+  - Found in URLs: /{channel}/d-{id}/{slug}
+  - User ID for API: Can be random string (e.g., 'random.id.here', 'test')
+  - Video ID format: {YYMMDD}{sequential number} (e.g., 260323133)

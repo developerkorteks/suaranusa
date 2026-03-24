@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Detail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .back-link {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        .article-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+        
+        .article-header {
+            padding: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.3;
+            color: #1a1a1a;
+        }
+        
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .quality-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .quality-high { background: #4caf50; }
+        .quality-medium { background: #ff9800; }
+        .quality-low { background: #f44336; }
+        
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .tag {
+            background: #f0f0f0;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .article-body {
+            padding: 30px;
+        }
+        
+        .article-description {
+            font-size: 1.2rem;
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f8f8;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+        
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: #333;
+        }
+        
+        .article-content p {
+            margin-bottom: 20px;
+        }
+        
+        .no-content {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+        }
+        
+        .scrape-section {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed #ffc107;
+        }
+        
+        .btn-scrape {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px 0;
+            transition: background 0.3s;
+        }
+        
+        .btn-scrape:hover {
+            background: #5568d3;
+        }
+        
+        .btn-scrape:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .error {
+            background: #ffebee;
+            padding: 20px;
+            border-radius: 10px;
+            color: #c62828;
+            margin: 20px 0;
+        }
+        
+        .original-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+        
+        .original-link:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="back-link">← Back to Articles</a>
+            <h1>Article Detail</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="article-container">
+            <div class="loading">⏳ Loading article...</div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        // Get article ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
+        
+        if (!articleId) {
+            document.getElementById('article-container').innerHTML = `
+                <div class="error">
+                    <h2>❌ No article ID provided</h2>
+                    <p>Please provide an article ID in the URL: ?id=8412424</p>
+                    <a href="/" class="original-link">← Back to Articles</a>
+                </div>
+            `;
+        } else {
+            loadArticle(articleId);
+        }
+        
+        async function loadArticle(id) {
+            try {
+                const response = await fetch(`${API_BASE}/api/articles/${id}`);
+                const data = await response.json();
+                
+                if (data.success && data.article) {
+                    displayArticle(data.article);
+                } else {
+                    showError('Article not found');
+                }
+            } catch (error) {
+                console.error('Error loading article:', error);
+                showError(error.message);
+            }
+        }
+        
+        function displayArticle(article) {
+            const quality = article.quality_score || 0;
+            const qualityClass = quality >= 0.7 ? 'quality-high' : 
+                                quality >= 0.4 ? 'quality-medium' : 'quality-low';
+            
+            const tags = article.tags || [];
+            const tagsHTML = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            
+            const imageUrl = article.image || 'https://via.placeholder.com/900x400?text=No+Image';
+            
+            let contentHTML = '';
+            
+            if (article.content && article.content.trim()) {
+                // Has full content
+                const paragraphs = article.content.split('\n\n');
+                contentHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+            } else {
+                // No full content - show scrape option
+                contentHTML = `
+                    <div class="scrape-section">
+                        <h3>📄 Full content not available</h3>
+                        <p>The full article content hasn't been scraped yet.</p>
+                        <button class="btn-scrape" onclick="scrapeArticleContent('${article.id}', '${article.url}')">
+                            🔍 Scrape Full Content Now
+                        </button>
+                        <div id="scrape-status"></div>
+                    </div>
+                    <div class="no-content">
+                        <p>Or visit the original article:</p>
+                        <a href="${article.url}" target="_blank" class="original-link">
+                            🔗 Open Original Article at Detik.com
+                        </a>
+                    </div>
+                `;
+            }
+            
+            const html = `
+                <div class="article-container">
+                    <img src="${imageUrl}" alt="${article.title}" class="article-image" 
+                         onerror="this.src='https://via.placeholder.com/900x400?text=Image+Not+Available'">
+                    
+                    <div class="article-header">
+                        <h1 class="article-title">${article.title || 'No Title'}</h1>
+                        
+                        <div class="article-meta">
+                            <span class="meta-item">📅 ${formatDate(article.publish_date)}</span>
+                            <span class="meta-item">🌐 ${article.source || 'Unknown'}</span>
+                            <span class="meta-item">✍️ ${article.author || 'Unknown'}</span>
+                            <span class="quality-badge ${qualityClass}">
+                                ⭐ Quality: ${(quality * 100).toFixed(0)}%
+                            </span>
+                        </div>
+                        
+                        ${article.category ? `<div class="meta-item">📂 ${article.category}</div>` : ''}
+                        
+                        ${tagsHTML ? `<div class="article-tags">${tagsHTML}</div>` : ''}
+                    </div>
+                    
+                    <div class="article-body">
+                        ${article.description ? `
+                            <div class="article-description">
+                                ${article.description}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="article-content">
+                            ${contentHTML}
+                        </div>
+                        
+                        ${article.url ? `
+                            <a href="${article.url}" target="_blank" class="original-link">
+                                🔗 View Original Article
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('article-container').innerHTML = html;
+        }
+        
+        async function scrapeArticleContent(articleId, articleUrl) {
+            const statusEl = document.getElementById('scrape-status');
+            const btn = event.target;
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Scraping...';
+            statusEl.innerHTML = '<p style="color: #666; margin-top: 10px;">Please wait, this may take 5-10 seconds...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/articles/${articleId}/scrape-detail`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusEl.innerHTML = '<p style="color: #4caf50; margin-top: 10px;">✅ Content scraped! Refreshing page...</p>';
+                    
+                    // Reload article to show new content
+                    setTimeout(() => loadArticle(articleId), 1000);
+                } else {
+                    throw new Error(data.message || 'Failed to scrape content');
+                }
+            } catch (error) {
+                statusEl.innerHTML = `<p style="color: #f44336; margin-top: 10px;">❌ Error: ${error.message}</p>`;
+                btn.disabled = false;
+                btn.textContent = '🔍 Try Again';
+            }
+        }
+        
+        function showError(message) {
+            document.getElementById('article-container').innerHTML = `
+                <div class="error">
+                    <h2>❌ Error Loading Article</h2>
+                    <p>${message}</p>
+                    <a href="/" class="original-link">← Back to Articles</a>
+                </div>
+            `;
+        }
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Unknown date';
+            try {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('id-ID', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch {
+                return dateStr;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📰 Detik Articles - Simple Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #667eea;
+        }
+        
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .article-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+        
+        .article-content {
+            padding: 20px;
+        }
+        
+        .article-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .article-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .article-description {
+            color: #555;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .quality-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .quality-high { background: #4caf50; }
+        .quality-medium { background: #ff9800; }
+        .quality-low { background: #f44336; }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            margin-top: 50px;
+        }
+        
+        .btn-refresh {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: background 0.3s;
+        }
+        
+        .btn-refresh:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📰 Detik Articles</h1>
+            <p>Scraped articles from detik.com - Real-time from API</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Stats -->
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="number" id="total-articles">-</div>
+                <div class="label">Total Articles</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="total-domains">-</div>
+                <div class="label">Domains</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="avg-quality">-</div>
+                <div class="label">Avg Quality</div>
+            </div>
+        </div>
+        
+        <!-- Search -->
+        <div class="search-box">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="🔍 Search articles by title or keyword..."
+                onkeyup="filterArticles()"
+            >
+        </div>
+        
+        <button class="btn-refresh" onclick="loadArticles()">🔄 Refresh Articles</button>
+        
+        <!-- Articles -->
+        <div id="articles-container">
+            <div class="loading">⏳ Loading articles from API...</div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>📊 Powered by Detik Dynamic Scraper</p>
+        <p>API: <a href="http://localhost:8000/docs" target="_blank">http://localhost:8000</a></p>
+    </footer>
+    
+    <script>
+        let allArticles = [];
+        const API_BASE = 'http://localhost:8000';
+        
+        // Load articles on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadArticles();
+            loadStats();
+        });
+        
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/statistics`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('total-articles').textContent = 
+                        data.database.total_articles || 0;
+                    document.getElementById('total-domains').textContent = 
+                        Object.keys(data.database.by_source || {}).length;
+                    document.getElementById('avg-quality').textContent = 
+                        (data.database.average_quality_score || 0).toFixed(2);
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        // Load articles from API
+        async function loadArticles() {
+            const container = document.getElementById('articles-container');
+            container.innerHTML = '<div class="loading">⏳ Loading articles from API...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/articles/search`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        limit: 100
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.articles && data.articles.length > 0) {
+                    allArticles = data.articles;
+                    displayArticles(allArticles);
+                } else {
+                    container.innerHTML = `
+                        <div class="no-results">
+                            <h2>😕 No articles found</h2>
+                            <p>Start scraping to see articles here!</p>
+                            <p>Visit <a href="http://localhost:8501">Dashboard</a> to trigger scraping.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h2>❌ Error loading articles</h2>
+                        <p>${error.message}</p>
+                        <p>Make sure the API server is running at ${API_BASE}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Display articles
+        function displayArticles(articles) {
+            const container = document.getElementById('articles-container');
+            
+            if (articles.length === 0) {
+                container.innerHTML = '<div class="no-results">No articles match your search.</div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="articles-grid">
+                    ${articles.map(article => createArticleCard(article)).join('')}
+                </div>
+            `;
+        }
+        
+        // Create article card HTML
+        function createArticleCard(article) {
+            const quality = article.quality_score || 0;
+            const qualityClass = quality >= 0.7 ? 'quality-high' : 
+                                quality >= 0.4 ? 'quality-medium' : 'quality-low';
+            
+            const tags = article.tags || [];
+            const tagsHTML = tags.slice(0, 5).map(tag => 
+                `<span class="tag">${tag}</span>`
+            ).join('');
+            
+            const imageUrl = article.image || 'https://via.placeholder.com/400x200?text=No+Image';
+            
+            return `
+                <div class="article-card" onclick="openArticle('${article.url || '#'}')">
+                    <img src="${imageUrl}" alt="${article.title}" class="article-image" 
+                         onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Available'">
+                    <div class="article-content">
+                        <h2 class="article-title">${article.title || 'No Title'}</h2>
+                        <div class="article-meta">
+                            <span>📅 ${formatDate(article.publish_date)}</span>
+                            <span>🌐 ${article.source || 'Unknown'}</span>
+                            <span class="quality-badge ${qualityClass}">
+                                ⭐ ${(quality * 100).toFixed(0)}%
+                            </span>
+                        </div>
+                        <p class="article-description">
+                            ${(article.description || 'No description available').substring(0, 150)}...
+                        </p>
+                        <div class="article-tags">
+                            ${tagsHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Filter articles by search
+        function filterArticles() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            if (searchTerm === '') {
+                displayArticles(allArticles);
+            } else {
+                const filtered = allArticles.filter(article => 
+                    (article.title || '').toLowerCase().includes(searchTerm) ||
+                    (article.description || '').toLowerCase().includes(searchTerm) ||
+                    (article.tags || []).some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+                displayArticles(filtered);
+            }
+        }
+        
+        // Format date
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Unknown date';
+            try {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('id-ID', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            } catch {
+                return dateStr;
+            }
+        }
+        
+        // Open article in new tab or detail page
+        function openArticle(url) {
+            if (url && url !== '#') {
+                // Extract article ID from URL
+                const match = url.match(/d-(\d+)/);
+                if (match && match[1]) {
+                    // Open detail page
+                    window.location.href = `/detail?id=${match[1]}`;
+                } else {
+                    // Fallback to original URL
+                    window.open(url, '_blank');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

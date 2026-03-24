@@ -1,0 +1,121 @@
+
+================================================================================
+DETIK.COM COMPREHENSIVE MULTI-CHANNEL SCRAPER
+================================================================================
+
+Total Subdomains: 32
+Total Channels with API: 10
+Total API Endpoints: 7
+
+================================================================================
+
+### PHASE 1: RECH.DETIK.COM (DETAIL) ###
+
+  Fetching news (detail): 30 items...
+  ✓ Got 30 articles from news (detail)
+  Fetching finance (detail): 30 items...
+  ✓ Got 30 articles from finance (detail)
+  Fetching sport (detail): 30 items...
+  ✓ Got 30 articles from sport (detail)
+  Fetching hot (detail): 30 items...
+  ✓ Got 30 articles from hot (detail)
+  Fetching inet (detail): 30 items...
+  ✓ Got 30 articles from inet (detail)
+  Fetching travel (detail): 30 items...
+  ✓ Got 30 articles from travel (detail)
+  Fetching food (detail): 30 items...
+  ✓ Got 30 articles from food (detail)
+  Fetching health (detail): 30 items...
+  ✓ Got 30 articles from health (detail)
+  Fetching oto (detail): 30 items...
+  ✗ URL Error: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)
+  Fetching main (detail): 30 items...
+  ✗ URL Error: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)
+
+### PHASE 2: RECH.DETIK.COM (WP) ###
+
+  Fetching news (wp): 30 items...
+  ✓ Got 30 articles from news (wp)
+  Fetching finance (wp): 30 items...
+  ✓ Got 30 articles from finance (wp)
+  Fetching sport (wp): 30 items...
+  ✓ Got 30 articles from sport (wp)
+  Fetching hot (wp): 30 items...
+  ✓ Got 30 articles from hot (wp)
+  Fetching inet (wp): 30 items...
+  ✓ Got 30 articles from inet (wp)
+  Fetching travel (wp): 30 items...
+  ✓ Got 30 articles from travel (wp)
+  Fetching food (wp): 30 items...
+  ✓ Got 30 articles from food (wp)
+  Fetching health (wp): 30 items...
+  ✓ Got 30 articles from health (wp)
+  Fetching oto (wp): 30 items...
+  ✓ Got 30 articles from oto (wp)
+  Fetching main (wp): 30 items...
+  ✓ Got 30 articles from main (wp)
+
+### PHASE 3: RECG.DETIK.COM (WP) ###
+
+  Fetching news from recg (wp): 30 items...
+  ✓ Got 30 articles from news (recg_wp)
+  Fetching finance from recg (wp): 30 items...
+  ✓ Got 30 articles from finance (recg_wp)
+  Fetching sport from recg (wp): 30 items...
+  ✓ Got 30 articles from sport (recg_wp)
+  Fetching hot from recg (wp): 30 items...
+  ✓ Got 30 articles from hot (recg_wp)
+  Fetching inet from recg (wp): 30 items...
+  ✓ Got 30 articles from inet (recg_wp)
+  Fetching travel from recg (wp): 30 items...
+  ✓ Got 30 articles from travel (recg_wp)
+  Fetching food from recg (wp): 30 items...
+  ✓ Got 30 articles from food (recg_wp)
+  Fetching health from recg (wp): 30 items...
+  ✓ Got 30 articles from health (recg_wp)
+  Fetching oto from recg (wp): 30 items...
+  ✓ Got 30 articles from oto (recg_wp)
+  Fetching main from recg (wp): 30 items...
+  ✓ Got 30 articles from main (recg_wp)
+
+### PHASE 4: RECH20.DETIK.COM (VIDEOS) ###
+
+  Fetching videos from rech20: 50 items...
+  ✓ Got 6 videos from rech20
+
+### CALCULATING STATISTICS ###
+
+================================================================================
+SCRAPING COMPLETE
+================================================================================
+Total Articles: 840
+Total Videos: 6
+Total Content: 846
+Unique IDs: 53
+Channels: 10
+
+Articles by Channel:
+  news        :   90 articles
+  finance     :   90 articles
+  sport       :   90 articles
+  hot         :   90 articles
+  inet        :   90 articles
+  travel      :   90 articles
+  food        :   90 articles
+  health      :   90 articles
+  oto         :   60 articles
+  main        :   60 articles
+================================================================================
+
+[✓] Comprehensive data saved to: detik_all_channels_data.json
+[✓] Unique IDs saved to: detik_all_unique_ids.txt
+[✓] Summary saved to: detik_comprehensive_summary.txt
+
+================================================================================
+ALL FILES GENERATED
+================================================================================
+1. detik_all_channels_data.json - Complete JSON data
+2. detik_all_unique_ids.txt - All unique IDs
+3. detik_comprehensive_summary.txt - Text summary
+================================================================================
+

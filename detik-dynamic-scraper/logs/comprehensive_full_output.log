@@ -1,0 +1,280 @@
+🧪 FULL COMPREHENSIVE TEST - All Content Channels
+======================================================================
+Testing ALL discovered content channels
+Started: 2026-03-23 23:54:37
+
+1️⃣ Discovering domains...
+🔍 Discovering domains dynamically...
+🔍 Starting domain discovery...
+  → Parsing homepage...
+    ✓ Found 26 domains from homepage
+  → Parsing sitemap...
+    ✓ Found domains from sitemap: https://www.detik.com/sitemap.xml
+  → Checking common subdomains...
+    ✓ Verified: www.detik.com
+    ✓ Verified: news.detik.com
+    ✓ Verified: finance.detik.com
+    ✓ Verified: sport.detik.com
+    ✓ Verified: hot.detik.com
+    ✓ Verified: inet.detik.com
+    ✓ Verified: travel.detik.com
+    ✓ Verified: food.detik.com
+    ✓ Verified: health.detik.com
+    ✓ Verified: oto.detik.com
+    ✓ Verified: wolipop.detik.com
+    ✓ Verified: 20.detik.com
+    ✓ Verified: foto.detik.com
+    ✓ Verified: event.detik.com
+    ✓ Verified: karir.detik.com
+    ✓ Verified: rech.detik.com
+    ✓ Verified: rech20.detik.com
+    ✓ Verified: recg.detik.com
+    ✓ Verified: connect.detik.com
+    ✓ Verified: apicomment.detik.com
+    ✓ Verified: adsmart.detik.com
+    ✓ Verified: rekomendit.detik.com
+    ✓ Verified: pasangmata.detik.com
+    ✓ Verified: fyb.detik.com
+    ✓ Verified: cdnv.detik.com
+    ✓ Verified: cdnstatic.detik.com
+    ✓ Verified: analytic.detik.com
+    ✓ Verified: newrevive.detik.com
+✅ Discovered 30 unique domains
+  ✅ Discovered 30 domains
+✅ Found 20 content channels
+   Testing ALL 20 domains
+
+📊 All content channels to test:
+   1. 20.detik.com
+   2. event.detik.com
+   3. finance.detik.com
+   4. food.detik.com
+   5. foto.detik.com
+   6. fyb.detik.com
+   7. health.detik.com
+   8. hot.detik.com
+   9. inet.detik.com
+  10. karir.detik.com
+  11. newpolong.detik.com
+  12. news.detik.com
+  13. oto.detik.com
+  14. pasangmata.detik.com
+  15. rech20.detik.com
+  16. sport.detik.com
+  17. temanmudik.detik.com
+  18. travel.detik.com
+  19. wolipop.detik.com
+  20. www.detik.com
+
+======================================================================
+🚀 Starting FULL comprehensive scraping...
+   This will take 3-5 minutes...
+
+🔍 Discovering domains dynamically...
+🔍 Starting domain discovery...
+  → Parsing homepage...
+    ✓ Found 30 domains from homepage
+  → Parsing sitemap...
+    ✓ Found domains from sitemap: https://www.detik.com/sitemap.xml
+  → Checking common subdomains...
+    ✓ Verified: www.detik.com
+    ✓ Verified: news.detik.com
+    ✓ Verified: finance.detik.com
+    ✓ Verified: sport.detik.com
+    ✓ Verified: hot.detik.com
+    ✓ Verified: inet.detik.com
+    ✓ Verified: travel.detik.com
+    ✓ Verified: food.detik.com
+    ✓ Verified: health.detik.com
+    ✓ Verified: oto.detik.com
+    ✓ Verified: wolipop.detik.com
+    ✓ Verified: 20.detik.com
+    ✓ Verified: foto.detik.com
+    ✓ Verified: event.detik.com
+    ✓ Verified: karir.detik.com
+    ✓ Verified: rech.detik.com
+    ✓ Verified: rech20.detik.com
+    ✓ Verified: recg.detik.com
+    ✓ Verified: connect.detik.com
+    ✓ Verified: apicomment.detik.com
+    ✓ Verified: adsmart.detik.com
+    ✓ Verified: rekomendit.detik.com
+    ✓ Verified: pasangmata.detik.com
+    ✓ Verified: fyb.detik.com
+    ✓ Verified: cdnv.detik.com
+    ✓ Verified: cdnstatic.detik.com
+    ✓ Verified: analytic.detik.com
+    ✓ Verified: newrevive.detik.com
+✅ Discovered 30 unique domains
+  ✅ Discovered 30 domains
+🚀 Starting comprehensive scrape of 20 subdomains
+   Target: 15 articles per subdomain
+   Max workers: 5
+
+📊 Scraping 20.detik.com...
+📊 Scraping event.detik.com...
+📊 Scraping finance.detik.com...
+📊 Scraping food.detik.com...
+📊 Scraping foto.detik.com...
+  ✅ Homepage: 1 articles
+  ✅ Homepage: 1 articles
+  ✅ Homepage: 54 articles
+  ✅ Total: 54 articles from finance.detik.com
+📊 Scraping fyb.detik.com...
+  ✅ Homepage: 23 articles
+  ✅ Total: 23 articles from foto.detik.com
+📊 Scraping health.detik.com...
+  ✅ Homepage: 98 articles
+  ✅ Total: 98 articles from 20.detik.com
+📊 Scraping hot.detik.com...
+🔍 Detecting API endpoints for news.detik.com...
+  → Analyzing HTML...
+🔍 Detecting API endpoints for news.detik.com...
+  → Analyzing HTML...
+    ✓ Found 5 endpoints from HTML
+  → Analyzing JavaScript...
+    ✓ Found 5 endpoints from HTML
+  → Analyzing JavaScript...
+  ✅ Homepage: 58 articles
+  ✅ Total: 58 articles from health.detik.com
+📊 Scraping inet.detik.com...
+    ✓ Analyzed 50 script tags
+  → Checking known patterns...
+  ✅ Homepage: 64 articles
+  ✅ Total: 64 articles from hot.detik.com
+📊 Scraping karir.detik.com...
+    ✓ Analyzed 50 script tags
+  → Checking known patterns...
+🔍 Detecting API endpoints for news.detik.com...
+  → Analyzing HTML...
+  ✅ Homepage: 1 articles
+    ✓ Found 7 endpoints from HTML
+  → Analyzing JavaScript...
+  ✅ Homepage: 1 articles
+🔍 Detecting API endpoints for news.detik.com...
+  → Analyzing HTML...
+    ✓ Analyzed 50 script tags
+  → Checking known patterns...
+🔍 Detecting API endpoints for news.detik.com...
+  → Analyzing HTML...
+    ✓ Found 7 endpoints from HTML
+  → Analyzing JavaScript...
+    ✓ Found 11 endpoints from HTML
+  → Analyzing JavaScript...
+    ✓ Analyzed 50 script tags
+  → Checking known patterns...
+    ✓ Analyzed 50 script tags
+  → Checking known patterns...
+    ✓ Verified 15 known patterns
+✅ Detected 18 API endpoints
+    ✓ Verified 15 known patterns
+✅ Detected 18 API endpoints
+    ✓ Verified 15 known patterns
+✅ Detected 18 API endpoints
+  ✅ API: 11 articles
+  ✅ Total: 12 articles from event.detik.com
+📊 Scraping newpolong.detik.com...
+  ✅ Total: 1 articles from food.detik.com
+📊 Scraping news.detik.com...
+    ✓ Verified 15 known patterns
+✅ Detected 18 API endpoints
+    ✓ Verified 15 known patterns
+✅ Detected 18 API endpoints
+  ✅ Homepage: 56 articles
+  ✅ Total: 56 articles from news.detik.com
+📊 Scraping oto.detik.com...
+  ✅ API: 1 articles
+  ✅ Total: 1 articles from fyb.detik.com
+📊 Scraping pasangmata.detik.com...
+  ✅ Homepage: 63 articles
+  ✅ Total: 63 articles from oto.detik.com
+📊 Scraping rech20.detik.com...
+  ✅ Total: 1 articles from inet.detik.com
+📊 Scraping sport.detik.com...
+  ✅ Total: 1 articles from karir.detik.com
+📊 Scraping temanmudik.detik.com...
+  ⚠️  HTTP 404 (attempt 1/3)
+📊 Scraping travel.detik.com...
+  ✅ Homepage: 51 articles
+  ✅ Total: 51 articles from sport.detik.com
+📊 Scraping wolipop.detik.com...
+  ✅ Homepage: 1 articles
+  ⚠️  HTTP 404 (attempt 2/3)
+  ✅ Homepage: 37 articles
+  ✅ Total: 37 articles from travel.detik.com
+📊 Scraping www.detik.com...
+  ✅ Homepage: 13 articles
+  ⚠️  HTTP 404 (attempt 3/3)
+  ✅ Homepage: 4 articles
+  ✅ Total: 1 articles from temanmudik.detik.com
+  ⚠️  Error on attempt 1/3: 
+  ✅ Total: 13 articles from www.detik.com
+  ✅ Total: 4 articles from wolipop.detik.com
+
+======================================================================
+📊 COMPREHENSIVE RESULTS
+======================================================================
+
+⏱️  Duration: 63.3 seconds (1.1 minutes)
+✅ Domains discovered: 30
+✅ Content channels: 20
+✅ Domains scraped: 20
+✅ Total articles: 538
+✅ Avg per domain: 26.9
+
+📈 Top 10 domains by articles:
+   1. 20.detik.com                   :  98 articles
+   2. hot.detik.com                  :  64 articles
+   3. oto.detik.com                  :  63 articles
+   4. health.detik.com               :  58 articles
+   5. news.detik.com                 :  56 articles
+   6. finance.detik.com              :  54 articles
+   7. sport.detik.com                :  51 articles
+   8. travel.detik.com               :  37 articles
+   9. foto.detik.com                 :  23 articles
+  10. www.detik.com                  :  13 articles
+  ... and 10 more domains
+
+💾 Storing in database...
+  ✅ Stored 538 articles
+
+📊 Database Statistics:
+  - Total articles: 538
+  - Total tags: 102
+  - Avg quality: 0.48
+  - Sources: 17
+
+💾 Exporting to JSON...
+  ✅ Exported 538 articles to data/comprehensive_full_export.json
+
+======================================================================
+📊 FINAL SUMMARY
+======================================================================
+
+⚡ Performance Metrics:
+  - Total time: 63.3s (1.1 min)
+  - Time per domain: 3.2s
+  - Articles per second: 8.5
+  - Domains per minute: 19.0
+
+📊 Coverage:
+  - All domains: 30
+  - Content channels: 20
+  - Successfully scraped: 20
+  - Coverage: 100.0%
+
+📈 Data Quality:
+  - Total articles: 538
+  - Stored: 538
+  - Exported: 538
+  - Quality score: 0.48
+
+======================================================================
+✅ FULL COMPREHENSIVE TEST PASSED!
+
+🎉 System fully validated:
+   - 20 domains scraped successfully
+   - 538 articles collected
+   - 538 articles exported
+   - Quality score: 0.48
+   - Completed in 1.1 minutes
