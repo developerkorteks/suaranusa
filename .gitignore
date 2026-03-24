@@ -1,3 +1,58 @@
-venv_detik
-/venv_detik/
+# Virtual Environment
 venv_detik/
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+db.sqlite3.backup
+local_settings.py
+staticfiles/
+media/
+
+# Environment Variables
+.env
+.env.example
+!.env.example
+
+# Scraper Data & Logs
+detik-dynamic-scraper/data/*.db
+detik-dynamic-scraper/data/*.db.backup
+detik-dynamic-scraper/data/*.json
+detik-dynamic-scraper/logs/*.log
+detik-dynamic-scraper/.pytest_cache/
+detik-dynamic-scraper/.env
+
+# JetBrains / VSCode
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
