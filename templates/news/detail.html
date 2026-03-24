@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ad_tags %}
 
 {% block title %}{{ article.title }} | Editorial Detail{% endblock %}
 
@@ -128,6 +129,14 @@
                 </div>
             {% endif %}
         </section>
+
+        <!-- MID ARTICLE AD SLOT -->
+        {% if ads.mid_article %}
+        <div class="nusa-ads-container my-16 text-center border-y border-black/5 py-12">
+            <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.4em] mb-6">Advertisement</p>
+            {{ ads.mid_article|cloudflare_safe }}
+        </div>
+        {% endif %}
 
         <!-- STORY MODE VISUALS -->
         {% if article.all_images %}

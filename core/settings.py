@@ -65,6 +65,7 @@ TEMPLATES = [
                                 "django.contrib.auth.context_processors.auth",
                                 "django.contrib.messages.context_processors.messages",
                                 "portal.context_processors.dynamic_categories",
+                                "portal.context_processors.advertisements",
                             ],        },
     },
 ]
@@ -124,7 +125,17 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/tmp/django_cache_suaranusa",
+    }
+}
+
 import os
+
+# Allow sync database calls in async contexts (required for context processors)
+os.environ["DJANGO_ALLOW_ASYNC_QUERYSET_ITERATION"] = "true"
 
 # API Backend Configuration
 API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")

@@ -3,6 +3,54 @@ from django.conf import settings
 from urllib.parse import urlparse
 import re
 
+from portal.models import AdSlot
+from django.core.cache import cache
+import logging
+
+logger = logging.getLogger(__name__)
+
+def advertisements(request):
+    """
+    Context processor to provide active advertisement scripts and URLs to all templates.
+    """
+    ads_data = {}
+    ads_urls = {}
+    
+    # Identify device type
+    ua = request.META.get('HTTP_USER_AGENT', '').lower()
+    is_mobile = any(x in ua for x in ['iphone', 'android', 'mobile', 'ipod', 'opera mini', 'blackberry'])
+    
+    cache_key = 'active_ad_slots_mobile' if is_mobile else 'active_ad_slots_desktop'
+    cached_payload = cache.get(cache_key)
+
+    if cached_payload is None:
+        ads_data = {}
+        ads_urls = {}
+        try:
+            active_slots = AdSlot.objects.filter(is_active=True)
+            for slot in active_slots:
+                # Handle Scripts
+                if is_mobile:
+                    ads_data[slot.position_slug] = slot.mobile_script or slot.desktop_script
+                else:
+                    ads_data[slot.position_slug] = slot.desktop_script or slot.mobile_script
+                
+                # Handle Direct URLs (Smartlinks)
+                if slot.direct_url:
+                    ads_urls[slot.position_slug] = slot.direct_url
+            
+            # Cache the combined data
+            payload = {"scripts": ads_data, "urls": ads_urls}
+            cache.set(cache_key, payload, 3600)
+            cached_payload = payload
+        except:
+            return {"ads": {}, "ads_urls": {}}
+
+    return {
+        "ads": cached_payload.get("scripts", {}),
+        "ads_urls": cached_payload.get("urls", {})
+    }
+
 def dynamic_categories(request):
     """
     Context processor to provide ALL dynamic categories to templates.

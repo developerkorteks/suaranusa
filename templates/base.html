@@ -1,9 +1,16 @@
+{% load static ad_tags %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}suaranusa | Premium Editorial{% endblock %}</title>
+    
+    <!-- ADSTERRA POPUNDER -->
+    {% if ads.popunder %}
+        {{ ads.popunder|cloudflare_safe }}
+    {% endif %}
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
     <style>
@@ -240,6 +247,18 @@
             max-width: 850px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        /* CAPITALIST BYPASS: Force ads to show in Reader Mode */
+        body.reader-active .nusa-ads-container {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background-color: #111111 !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+        body.reader-active .nusa-ads-container p {
+            color: #ff3b30 !important; /* Make ADVERTISEMENT label stand out */
         }
 
         /* Reader Toggle Button State */
@@ -481,5 +500,10 @@
             if(e.key === 'Escape') { closeMenu(); closeSearch(); }
         });
     </script>
+
+    <!-- ADSTERRA SOCIAL BAR -->
+    {% if ads.social_bar %}
+        {{ ads.social_bar|cloudflare_safe }}
+    {% endif %}
 </body>
 </html>
