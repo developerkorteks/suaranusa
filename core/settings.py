@@ -31,7 +31,7 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = "django-insecure-ecyb39g=dzl3(_23_+*m92q1(9d9c@b*wj_t2)7o+gj+^guj4_"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["humanmade.my.id", "markom.humanmade.my.id", "localhost", "127.0.0.1"]
 
