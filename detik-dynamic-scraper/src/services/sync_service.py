@@ -10,6 +10,7 @@ from repositories.article_repository import ArticleRepository
 from services.scraper_service import ScraperService
 from core.domain_discovery import DomainDiscovery
 from core.content_scraper import ContentScraper
+from core.article_detail_scraper import ArticleDetailScraper
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -21,6 +22,7 @@ class SyncService:
         self.scraper_service = scraper_service
         self.discovery = DomainDiscovery()
         self.list_scraper = ContentScraper()
+        self.detail_scraper = ArticleDetailScraper(rate_limit=0.2)
 
     async def run_full_sync(self, articles_per_domain: int = 20):
         """
@@ -53,22 +55,27 @@ class SyncService:
                 # Scrape List
                 target_url = f"https://{domain}"
                 articles = await self.list_scraper.scrape(target_url)
+                
+                if not articles:
+                    continue
+                    
                 targets = articles[:articles_per_domain]
 
-                # Immediate Hydration (Auto-Hydration)
+                # Immediate Hydration (Auto-Hydration with Media)
                 for article in targets:
                     url = article.get("url")
                     if not url:
                         continue
 
-                    # This method in ScraperService already saves to repo
-                    success, _ = (
+                    # FIX: Use detail_scraper instead of list_scraper for media hydration
+                    success, media_info = (
                         await self.scraper_service._update_single_article_media(
-                            article, self.scraper_service.scraper, skip_existing=True
+                            article, self.detail_scraper, skip_existing=True
                         )
                     )
                     if success:
                         total_synced += 1
+                        logger.info(f"  ✓ Hydrated: {article.get('title')[:50]}... (Images: {media_info.get('images', 0)})")
 
             except Exception as e:
                 logger.error(f"Error syncing domain {domain}: {e}")

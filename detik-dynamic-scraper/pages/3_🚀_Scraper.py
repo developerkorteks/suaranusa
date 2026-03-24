@@ -3,7 +3,11 @@
 import streamlit as st
 import asyncio
 import sys
+import os
 from pathlib import Path
+
+# API Configuration
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -148,7 +152,7 @@ with tab2:
                     payload["source"] = media_source
 
                 response = requests.post(
-                    "http://localhost:8000/api/articles/batch-update-media",
+                    f"{API_BASE_URL}/api/articles/batch-update-media",
                     json=payload,
                     timeout=300,
                 )
@@ -174,7 +178,7 @@ with tab2:
                     st.error(f"❌ Error: {result.get('error', 'Unknown error')}")
         except Exception as e:
             st.error(f"❌ Failed to connect to API: {e}")
-            st.info("Make sure the API server is running on localhost:8000")
+            st.info(f"Make sure the API server is running on {API_BASE_URL}")
 
 # Tab 3: Status
 with tab3:

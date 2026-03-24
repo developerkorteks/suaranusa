@@ -23,8 +23,9 @@ async def run_production_flow_test():
     print("DETIK DYNAMIC SCRAPER - PRODUCTION FLOW INTEGRATION TEST")
     print("-" * 60)
 
-    DB_PATH = "/home/korteks/Data/project/suaranusa.my.id/detik.com/detik-dynamic-scraper/data/comprehensive_full_test.db"
-    db = Database(DB_PATH)
+    BASE_DIR = Path(__file__).parent.parent
+    DB_PATH = BASE_DIR / "data" / "comprehensive_full_test.db"
+    db = Database(str(DB_PATH))
     repo = ArticleRepository(db)
     scraper_service = ScraperService(repo)
     detail_scraper = ArticleDetailScraper(rate_limit=0.1)

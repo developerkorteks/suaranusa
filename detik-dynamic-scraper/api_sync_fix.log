@@ -1,0 +1,7 @@
+2026-03-25 02:18:07 - __main__ - [32mINFO[0m - Using database at: /home/korteks/Data/project/suaranusa.my.id/detik.com/detik-dynamic-scraper/data/comprehensive_full_test.db
+INFO:     Started server process [10406]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.

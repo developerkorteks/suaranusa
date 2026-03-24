@@ -26,6 +26,7 @@ from storage.database import Database
 from repositories.article_repository import ArticleRepository
 from services.article_service import ArticleService
 from services.scraper_service import ScraperService
+from services.sync_service import SyncService
 from core.data_normalizer import DataNormalizer
 from config import settings
 from utils.logger import setup_logger
@@ -71,14 +72,22 @@ async def add_process_time_header(request: Request, call_next):
 
 
 # Global Service Instances
-# Use absolute path to ensure database is found regardless of where API is started
-DB_PATH = "/home/korteks/Data/project/suaranusa.my.id/detik.com/detik-dynamic-scraper/data/comprehensive_full_test.db"
+SCRAPER_ROOT = Path(__file__).parent.parent.parent
+DEFAULT_DB_PATH = SCRAPER_ROOT / "data" / "comprehensive_full_test.db"
+
+# BP #7: Environment-based configuration
+import os
+from dotenv import load_dotenv
+load_dotenv(SCRAPER_ROOT / ".env")
+
+DB_PATH = os.getenv("DATABASE_PATH", str(DEFAULT_DB_PATH))
 logger.info(f"Using database at: {DB_PATH}")
 
 db_instance = Database(DB_PATH)
 article_repo = ArticleRepository(db_instance)
 article_service = ArticleService(article_repo)
 scraper_service = ScraperService(article_repo)
+sync_service = SyncService(article_repo, scraper_service)
 
 
 # Pydantic Models
@@ -95,6 +104,10 @@ class SearchRequest(BaseModel):
     category: Optional[str] = None
     limit: int = 100
     offset: int = 0
+
+
+class SyncRequest(BaseModel):
+    articles_per_domain: int = 20
 
 
 class BatchMediaUpdateRequest(BaseModel):
@@ -123,6 +136,21 @@ async def scrape(request: ScrapeRequest):
             request.url, request.response_type, request.normalize
         )
         return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/sync/full")
+async def sync_full(request: SyncRequest):
+    """Trigger a full production sync cycle across discovered subdomains."""
+    try:
+        # Run in background to avoid timeout
+        asyncio.create_task(sync_service.run_full_sync(request.articles_per_domain))
+        return {
+            "success": True,
+            "message": "Full sync started in background",
+            "articles_per_domain": request.articles_per_domain,
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
