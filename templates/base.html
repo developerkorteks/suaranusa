@@ -386,7 +386,7 @@
     </header>
 
     <!-- FULL SCREEN SEARCH OVERLAY -->
-    <div id="search-overlay" class="fixed inset-0 bg-white z-[600] hidden flex flex-col items-center justify-center p-6 bg-opacity-95 backdrop-blur-xl transition-all duration-500 opacity-0 pointer-events-none">
+    <div id="search-overlay" class="fixed inset-0 bg-white z-[600] flex flex-col items-center justify-center p-6 bg-opacity-95 backdrop-blur-xl transition-all duration-500 opacity-0 pointer-events-none">
         <button id="search-close" class="absolute top-10 right-10 p-4 text-gray-400 hover:text-black transition-colors">
             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
@@ -402,7 +402,7 @@
     </div>
 
     <!-- MOBILE MENU DRAWER -->
-    <div id="mobile-menu" class="fixed inset-0 bg-white z-[500] -translate-x-full lg:hidden overflow-y-auto transition-transform duration-500 ease-in-out hidden">
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-[500] lg:hidden overflow-y-auto transition-transform duration-500 ease-in-out -translate-x-full">
         <div class="p-8">
             <div class="flex justify-between items-center mb-16">
                 <span class="brand-logo text-xl uppercase">suara<span class="italic">nusa</span></span>
@@ -518,37 +518,25 @@
         });
 
         const openMenu = () => { 
-            mobileMenu.classList.remove('hidden');
-            setTimeout(() => {
-                mobileMenu.classList.remove('-translate-x-full');
-                mobileMenu.classList.add('translate-x-0');
-            }, 10);
+            mobileMenu.classList.remove('-translate-x-full');
+            mobileMenu.classList.add('translate-x-0');
             document.body.style.overflow = 'hidden'; 
         };
         const closeMenu = () => { 
             mobileMenu.classList.remove('translate-x-0');
             mobileMenu.classList.add('-translate-x-full');
-            setTimeout(() => {
-                mobileMenu.classList.add('hidden');
-            }, 500);
             document.body.style.overflow = 'auto'; 
         };
         
         const openSearch = () => { 
-            searchOverlay.classList.remove('hidden'); 
-            setTimeout(() => {
-                searchOverlay.classList.remove('opacity-0', 'pointer-events-none');
-                searchOverlay.classList.add('opacity-100', 'pointer-events-auto');
-            }, 10);
+            searchOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            searchOverlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden'; 
             searchOverlay.querySelector('input').focus(); 
         };
         const closeSearch = () => { 
             searchOverlay.classList.remove('opacity-100', 'pointer-events-auto');
             searchOverlay.classList.add('opacity-0', 'pointer-events-none');
-            setTimeout(() => {
-                searchOverlay.classList.add('hidden');
-            }, 500);
             document.body.style.overflow = 'auto'; 
         };
 
