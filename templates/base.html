@@ -11,7 +11,9 @@
         {{ ads.popunder|cloudflare_safe }}
     {% endif %}
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- suaranusa Premium Styles (Compiled Tailwind v4) -->
+    <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -74,7 +76,6 @@
         }
         
         .modular-card {
-            background: #ffffff;
             border-radius: 16px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
@@ -137,6 +138,39 @@
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* CRITICAL UI FIXES (INLINE FALLBACK) */
+        .sidebar-label {
+            font-size: 9px !important;
+            font-weight: 900 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.4em !important;
+            margin-bottom: 1rem !important;
+            color: rgba(255, 255, 255, 0.3) !important;
+            display: block !important;
+        }
+
+        .tag-badge {
+            display: inline-block !important;
+            padding: 0.625rem 1.25rem !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-size: 10px !important;
+            font-weight: 900 !important;
+            border-radius: 0.75rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1em !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            transition: all 0.2s ease !important;
+            margin-bottom: 0.5rem !important;
+            margin-right: 0.5rem !important;
+            text-decoration: none !important;
+        }
+
+        .tag-badge:hover {
+            background-color: white !important;
+            color: black !important;
+        }
 
         /* READER MODE STYLES (PREMIUM DARK THEME - ROBUST FIX) */
         body.reader-active {

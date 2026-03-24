@@ -144,7 +144,7 @@
                 <h3 class="text-3xl md:text-5xl font-serif font-black text-gray-900 tracking-tighter uppercase">Editorial Documentation</h3>
                 <div class="space-y-16 md:space-y-20">
                     {% for img in article.all_images %}
-                        <div class="modular-card overflow-hidden group border-8 md:border-[16px] border-white">
+                        <div class="modular-card bg-white overflow-hidden group border-8 md:border-[16px] border-white">
                             <img src="{{ img.url }}" alt="{{ img.alt }}" class="editorial-img w-full h-auto object-cover group-hover:scale-105 transition-transform duration-[2s]">
                             <div class="p-6 md:p-10 bg-white">
                                 <div class="flex items-start space-x-4 md:space-x-8">
@@ -164,19 +164,19 @@
         <!-- Metadata Identifier Card -->
         <div class="modular-card p-12 bg-black text-white space-y-12">
             <div>
-                <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.4em] mb-4">Internal Identifier</p>
+                <p class="sidebar-label">Internal Identifier</p>
                 <p class="text-4xl font-serif font-black tracking-tighter italic">#{{ article.id|slice:":8" }}</p>
             </div>
             <div class="space-y-10">
                 <div>
-                    <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] mb-4">Origin Domain</p>
+                    <p class="sidebar-label">Origin Domain</p>
                     <p class="text-sm font-bold text-blue-400 opacity-60 break-all">{{ article.source_display }}</p>
                 </div>
                 <div>
-                    <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] mb-4">Topics Covered</p>
+                    <p class="sidebar-label">Topics Covered</p>
                     <div class="flex flex-wrap gap-3 mt-6">
                         {% for tag in article.tags %}
-                            <span class="px-5 py-2.5 bg-white/5 text-white/70 text-[10px] font-black rounded-xl uppercase tracking-widest border border-white/5 hover:bg-white hover:text-black transition-all">#{{ tag }}</span>
+                            <span class="tag-badge">#{{ tag }}</span>
                         {% endfor %}
                     </div>
                 </div>

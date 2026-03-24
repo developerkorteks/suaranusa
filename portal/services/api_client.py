@@ -19,13 +19,14 @@ class ApiService:
             headers={"Content-Type": "application/json"}
         )
 
-    async def get_articles(self, limit: int = 20, offset: int = 0, source: Optional[str] = None, query: Optional[str] = None) -> List[Dict[str, Any]]:
-        """Fetch articles from the API with source filter, pagination and SEARCH."""
+    async def get_articles(self, limit: int = 20, offset: int = 0, source: Optional[str] = None, query: Optional[str] = None, category: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Fetch articles from the API with source/category filter, pagination and SEARCH."""
         try:
             async with self._get_client() as client:
                 payload = {"limit": limit, "offset": offset}
                 if source: payload["source"] = source
                 if query: payload["query"] = query
+                if category: payload["category"] = category
                 
                 response = await client.post("/api/articles/search", json=payload)
                 response.raise_for_status()

@@ -1,0 +1,996 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>suaranusa | Premium Editorial Feed</title>
+    
+    <!-- ADSTERRA POPUNDER -->
+    
+        <script data-cfasync="false" src="https://divorceabetpiano.com/2e/fc/7b/2efc7b87d5d775bc266c149335be6163.js"></script>
+    
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-editorial: #f7f7f5;
+            --accent-red: #ff3b30;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-editorial);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 80px;
+        }
+        @media (min-width: 1024px) { body { padding-bottom: 0; } }
+        
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--bg-editorial);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .main-canvas {
+            max-width: 1320px;
+            margin: 120px auto 40px;
+            background: var(--bg-editorial);
+            padding: 0 40px;
+            position: relative;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-canvas { margin-top: 100px; padding: 0 24px; }
+        }
+
+        .hero-title {
+            font-size: clamp(28px, 6vw, 64px);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            font-weight: 600;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .highlight-red {
+            background-color: var(--accent-red);
+            color: white;
+        }
+        
+        .brand-logo {
+            letter-spacing: 0.2em;
+            font-weight: 800;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .modular-card {
+            background: #ffffff;
+            border-radius: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .modular-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+        }
+
+        .editorial-img {
+            filter: grayscale(100%) contrast(110%);
+            transition: filter 0.5s ease;
+        }
+        .editorial-img:hover {
+            filter: grayscale(0%) contrast(100%);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            min-width: 200px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            z-index: 100;
+            padding: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .dropdown-trigger:hover .dropdown-menu { display: block; }
+
+        .mobile-dock {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: #999;
+        }
+        .dock-item.active { color: var(--text-primary); }
+        .dock-dot {
+            width: 4px; height: 4px;
+            background: var(--accent-red);
+            border-radius: 2px;
+            margin-top: 4px;
+            opacity: 0;
+        }
+        .dock-item.active .dock-dot { opacity: 1; }
+
+        #mobile-menu, #search-overlay { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* READER MODE STYLES (PREMIUM DARK THEME - ROBUST FIX) */
+        body.reader-active {
+            --bg-editorial: #0a0a0a;
+            background-color: #0a0a0a !important;
+            color: #dddddd !important;
+        }
+        
+        body.reader-active .main-canvas,
+        body.reader-active .sticky-header,
+        body.reader-active #mobile-menu,
+        body.reader-active #search-overlay {
+            background-color: #0a0a0a !important;
+        }
+
+        /* Category Bar Fix */
+        body.reader-active .sticky.top-\[80px\] {
+            background-color: #0a0a0a !important;
+            border-bottom-color: rgba(255,255,255,0.1) !important;
+        }
+        body.reader-active .sticky.top-\[80px\] a {
+            color: #888888 !important;
+        }
+        body.reader-active .sticky.top-\[80px\] a.text-red-600 {
+            color: var(--accent-red) !important;
+            border-bottom-color: var(--accent-red) !important;
+        }
+
+        /* Override Background Utilities */
+        body.reader-active .bg-white,
+        body.reader-active .bg-gray-50,
+        body.reader-active .bg-gray-100,
+        body.reader-active .bg-gray-200,
+        body.reader-active .bg-gray-300,
+        body.reader-active .modular-card {
+            background-color: #161616 !important;
+            color: #dddddd !important;
+        }
+
+        /* Typography Inversion - High Specificity */
+        body.reader-active .text-gray-900,
+        body.reader-active .text-gray-800,
+        body.reader-active .text-black,
+        body.reader-active h1, body.reader-active h2, body.reader-active h3, 
+        body.reader-active h4, body.reader-active h5, body.reader-active h6,
+        body.reader-active .brand-logo,
+        body.reader-active .font-serif,
+        body.reader-active a {
+            color: #ffffff !important;
+        }
+
+        body.reader-active .text-gray-700,
+        body.reader-active .text-gray-600,
+        body.reader-active .text-gray-500 {
+            color: #bbbbbb !important;
+        }
+
+        body.reader-active .text-gray-400,
+        body.reader-active .text-gray-300,
+        body.reader-active .text-white\/30,
+        body.reader-active .text-white\/70,
+        body.reader-active .text-white\/20 {
+            color: #888888 !important;
+        }
+
+        /* Interactive Elements */
+        body.reader-active a:hover {
+            color: var(--accent-red) !important;
+        }
+        body.reader-active .border,
+        body.reader-active .border-t,
+        body.reader-active .border-b,
+        body.reader-active .border-l,
+        body.reader-active .border-black\/5,
+        body.reader-active .border-white\/10 {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Specific Component Fixes */
+        body.reader-active .bg-black {
+            background-color: #222222 !important;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        body.reader-active .highlight-red {
+            background-color: var(--accent-red) !important;
+            color: white !important;
+        }
+        body.reader-active .dropdown-menu {
+            background-color: #1a1a1a !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+
+        /* Tailwind Prose Inversion */
+        body.reader-active .prose {
+            --tw-prose-body: #dddddd;
+            --tw-prose-headings: #ffffff;
+            --tw-prose-links: #ffffff;
+            --tw-prose-bold: #ffffff;
+            --tw-prose-quotes: #eeeeee;
+            --tw-prose-captions: #888888;
+            --tw-prose-hr: #333333;
+        }
+
+        /* Reader Mode Layout Logic: Hide sidebar only on Detail Page */
+        body.reader-active article.space-y-16 + aside { display: none !important; }
+        body.reader-active article.space-y-16 {
+            grid-column: span 3 / span 3 !important;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* CAPITALIST BYPASS: Force ads to show in Reader Mode */
+        body.reader-active .nusa-ads-container {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background-color: #111111 !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+        body.reader-active .nusa-ads-container p {
+            color: #ff3b30 !important; /* Make ADVERTISEMENT label stand out */
+        }
+
+        /* Reader Toggle Button State */
+        body.reader-active #reader-mode-toggle,
+        body.reader-active #reader-mode-toggle-dropdown {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            border-color: #ffffff !important;
+        }
+        body.reader-active #reader-mode-toggle-mobile {
+            color: var(--accent-red) !important;
+        }
+        body.reader-active .mobile-dock {
+            background: rgba(10, 10, 10, 0.95) !important;
+            border-top-color: rgba(255,255,255,0.1) !important;
+        }
+        body.reader-active .dock-item.active { color: #ffffff !important; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED STICKY HEADER -->
+    <header class="sticky-header">
+        <div class="max-w-[1320px] mx-auto px-4 md:px-10 py-6">
+            <div class="flex items-center justify-between">
+                <!-- LEFT: LIVE INDICATOR -->
+                <div class="flex-1 flex items-center">
+                    <div class="bg-black text-white px-4 py-1.5 rounded-full flex items-center space-x-2">
+                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                        <span class="text-[10px] font-black tracking-widest uppercase">13</span>
+                    </div>
+                </div>
+
+                <!-- CENTER: BRAND LOGO -->
+                <div class="flex-none text-center px-2 md:px-4">
+                    <a href="/" class="brand-logo text-lg md:text-2xl lg:text-3xl text-gray-800 uppercase block leading-none whitespace-nowrap tracking-widest md:tracking-[0.12em]">
+                        suara<span class="italic font-medium">nusa</span>
+                    </a>
+                </div>
+
+                <!-- RIGHT: NAVIGATION & SEARCH -->
+                <div class="flex-1 flex items-center justify-end">
+                    <div class="hidden 2xl:flex space-x-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 items-center mr-8">
+                        
+                            <a href="/?cat=BERITA DETIKHEALTH" class="hover:text-black transition-colors ">BERITA DETIKHE…</a>
+                        
+                            <a href="/?cat=BERITA EKONOMI BISNIS" class="hover:text-black transition-colors ">BERITA EKONOMI…</a>
+                        
+                            <a href="/?cat=CELEB" class="hover:text-black transition-colors ">CELEB</a>
+                        
+                    </div>
+                    
+                    <div class="flex items-center space-x-1 md:space-x-2">
+                        <button id="reader-mode-toggle" class="hidden md:block border border-black px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all whitespace-nowrap mr-2">Reader Mode</button>
+                        
+                        <div class="flex items-center border-l border-black/5 pl-2 md:pl-4 space-x-1">
+                            <!-- MOBILE READER MODE ICON -->
+                            <button id="reader-mode-toggle-mobile" class="md:hidden p-2 text-gray-800 hover:text-red-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            </button>
+
+                            <button id="search-toggle" class="p-2 text-gray-800 hover:text-red-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </button>
+
+                            <!-- DESKTOP DROPDOWN TRIGGER -->
+                            <div class="hidden lg:block relative">
+                                <button id="desktop-menu-toggle" class="p-2 text-gray-800 hover:text-red-600 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path></svg>
+                                </button>
+                                <!-- DROPDOWN CONTENT -->
+                                <div id="desktop-dropdown" class="dropdown-menu right-0 mt-2 w-80 bg-white shadow-2xl rounded-2xl p-8 border border-black/5" style="display: none; z-index: 1000;">
+                                    <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.4em] mb-6">Editorial Sections</p>
+                                    <div class="grid grid-cols-1 gap-4 max-h-[60vh] overflow-y-auto no-scrollbar">
+                                        <a href="/" class="font-serif text-xl font-bold text-gray-900 hover:text-red-600 transition-colors">Utama</a>
+                                        
+                                            <a href="/?cat=BERITA DETIKHEALTH" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">BERITA DETIKHEALTH</a>
+                                        
+                                            <a href="/?cat=BERITA EKONOMI BISNIS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">BERITA EKONOMI BISNIS</a>
+                                        
+                                            <a href="/?cat=CELEB" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">CELEB</a>
+                                        
+                                            <a href="/?cat=CELEB STYLE" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">CELEB STYLE</a>
+                                        
+                                            <a href="/?cat=CERITA PERJALANAN" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">CERITA PERJALANAN</a>
+                                        
+                                            <a href="/?cat=CYBERLIFE" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">CYBERLIFE</a>
+                                        
+                                            <a href="/?cat=DETIKTV" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">DETIKTV</a>
+                                        
+                                            <a href="/?cat=DOMESTIC DESTINATION" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">DOMESTIC DESTINATION</a>
+                                        
+                                            <a href="/?cat=ENERGI" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">ENERGI</a>
+                                        
+                                            <a href="/?cat=ENTERTAINMENT NEWS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">ENTERTAINMENT NEWS</a>
+                                        
+                                            <a href="/?cat=FASHION NEWS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">FASHION NEWS</a>
+                                        
+                                            <a href="/?cat=FOTO BISNIS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">FOTO BISNIS</a>
+                                        
+                                            <a href="/?cat=FOTO ENTERTAINMENT" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">FOTO ENTERTAINMENT</a>
+                                        
+                                            <a href="/?cat=FOTO FASHION" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">FOTO FASHION</a>
+                                        
+                                            <a href="/?cat=FOTO NEWS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">FOTO NEWS</a>
+                                        
+                                            <a href="/?cat=FOTOTRAVEL" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">FOTOTRAVEL</a>
+                                        
+                                            <a href="/?cat=GAMES NEWS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">GAMES NEWS</a>
+                                        
+                                            <a href="/?cat=INDUSTRI" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">INDUSTRI</a>
+                                        
+                                            <a href="/?cat=INTERNASIONAL" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">INTERNASIONAL</a>
+                                        
+                                            <a href="/?cat=LOVE" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">LOVE</a>
+                                        
+                                            <a href="/?cat=MAKEUP AND SKINCARE" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">MAKEUP AND SKINCARE</a>
+                                        
+                                            <a href="/?cat=MELINDUNGI TUAH MARWAH" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">MELINDUNGI TUAH MARWAH</a>
+                                        
+                                            <a href="/?cat=MOBIL" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">MOBIL</a>
+                                        
+                                            <a href="/?cat=MOBIL LISTRIK" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">MOBIL LISTRIK</a>
+                                        
+                                            <a href="/?cat=MONEY HACKS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">MONEY HACKS</a>
+                                        
+                                            <a href="/?cat=MOTO GP" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">MOTO GP</a>
+                                        
+                                            <a href="/?cat=NEWS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">NEWS</a>
+                                        
+                                            <a href="/?cat=SPORT" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">SPORT</a>
+                                        
+                                            <a href="/?cat=SPORTSTYLE" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">SPORTSTYLE</a>
+                                        
+                                            <a href="/?cat=SPOTLIGHT" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">SPOTLIGHT</a>
+                                        
+                                            <a href="/?cat=TOPIK KHUSUS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">TOPIK KHUSUS</a>
+                                        
+                                            <a href="/?cat=TRAVEL NEWS" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">TRAVEL NEWS</a>
+                                        
+                                            <a href="/?cat=VIDEO" class="font-serif text-lg text-gray-700 hover:text-red-600 transition-colors">VIDEO</a>
+                                        
+                                    </div>
+                                                                    <div class="mt-8 pt-6 border-t border-black/5">
+                                                                        <button id="reader-mode-toggle-dropdown" class="w-full py-4 bg-black text-white text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-red-600 transition-all">Reader Mode</button>
+                                                                    </div>                                </div>
+                            </div>
+
+                            <!-- MOBILE TOGGLE -->
+                            <button id="menu-toggle" class="lg:hidden p-2 text-gray-800 hover:text-red-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- FULL SCREEN SEARCH OVERLAY -->
+    <div id="search-overlay" class="fixed inset-0 bg-white z-[300] hidden flex flex-col items-center justify-center p-6 bg-opacity-95 backdrop-blur-xl">
+        <button id="search-close" class="absolute top-10 right-10 p-4 text-gray-400 hover:text-black transition-colors">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="w-full max-w-4xl space-y-12">
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em] text-center">Global Search Terminal</p>
+            <form action="/" method="GET" class="relative group">
+                <input type="text" name="q" placeholder="TYPE TO DISCOVER..." class="w-full bg-transparent border-b-4 border-black/5 focus:border-red-600 py-8 text-4xl md:text-7xl font-serif font-black tracking-tighter outline-none text-center transition-all placeholder:text-gray-100" autofocus>
+                <div class="mt-8 flex justify-center space-x-4">
+                    <button type="submit" class="px-12 py-4 bg-black text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-full hover:bg-red-600 transition-all shadow-xl">SEARCH ARCHIVE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MOBILE MENU DRAWER -->
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-[200] transform -translate-x-full lg:hidden overflow-y-auto">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-16">
+                <span class="brand-logo text-xl uppercase">suara<span class="italic">nusa</span></span>
+                <button id="menu-close" class="p-2 text-gray-800">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <nav class="space-y-8">
+                <p class="text-[10px] font-black text-gray-300 uppercase tracking-[0.4em] mb-10">Editorial Sections</p>
+                <a href="/" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">Utama</a>
+                
+                    <a href="/?cat=BERITA DETIKHEALTH" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">BERITA DETIKHEALTH</a>
+                
+                    <a href="/?cat=BERITA EKONOMI BISNIS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">BERITA EKONOMI BISNIS</a>
+                
+                    <a href="/?cat=CELEB" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">CELEB</a>
+                
+                    <a href="/?cat=CELEB STYLE" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">CELEB STYLE</a>
+                
+                    <a href="/?cat=CERITA PERJALANAN" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">CERITA PERJALANAN</a>
+                
+                    <a href="/?cat=CYBERLIFE" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">CYBERLIFE</a>
+                
+                    <a href="/?cat=DETIKTV" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">DETIKTV</a>
+                
+                    <a href="/?cat=DOMESTIC DESTINATION" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">DOMESTIC DESTINATION</a>
+                
+                    <a href="/?cat=ENERGI" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">ENERGI</a>
+                
+                    <a href="/?cat=ENTERTAINMENT NEWS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">ENTERTAINMENT NEWS</a>
+                
+                    <a href="/?cat=FASHION NEWS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">FASHION NEWS</a>
+                
+                    <a href="/?cat=FOTO BISNIS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">FOTO BISNIS</a>
+                
+                    <a href="/?cat=FOTO ENTERTAINMENT" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">FOTO ENTERTAINMENT</a>
+                
+                    <a href="/?cat=FOTO FASHION" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">FOTO FASHION</a>
+                
+                    <a href="/?cat=FOTO NEWS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">FOTO NEWS</a>
+                
+                    <a href="/?cat=FOTOTRAVEL" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">FOTOTRAVEL</a>
+                
+                    <a href="/?cat=GAMES NEWS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">GAMES NEWS</a>
+                
+                    <a href="/?cat=INDUSTRI" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">INDUSTRI</a>
+                
+                    <a href="/?cat=INTERNASIONAL" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">INTERNASIONAL</a>
+                
+                    <a href="/?cat=LOVE" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">LOVE</a>
+                
+                    <a href="/?cat=MAKEUP AND SKINCARE" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">MAKEUP AND SKINCARE</a>
+                
+                    <a href="/?cat=MELINDUNGI TUAH MARWAH" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">MELINDUNGI TUAH MARWAH</a>
+                
+                    <a href="/?cat=MOBIL" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">MOBIL</a>
+                
+                    <a href="/?cat=MOBIL LISTRIK" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">MOBIL LISTRIK</a>
+                
+                    <a href="/?cat=MONEY HACKS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">MONEY HACKS</a>
+                
+                    <a href="/?cat=MOTO GP" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">MOTO GP</a>
+                
+                    <a href="/?cat=NEWS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">NEWS</a>
+                
+                    <a href="/?cat=SPORT" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">SPORT</a>
+                
+                    <a href="/?cat=SPORTSTYLE" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">SPORTSTYLE</a>
+                
+                    <a href="/?cat=SPOTLIGHT" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">SPOTLIGHT</a>
+                
+                    <a href="/?cat=TOPIK KHUSUS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">TOPIK KHUSUS</a>
+                
+                    <a href="/?cat=TRAVEL NEWS" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">TRAVEL NEWS</a>
+                
+                    <a href="/?cat=VIDEO" class="block text-4xl font-serif font-black text-gray-900 tracking-tighter">VIDEO</a>
+                
+            </nav>
+        </div>
+    </div>
+
+    <!-- MOBILE DOCK -->
+    <div class="mobile-dock fixed bottom-0 left-0 right-0 h-20 lg:hidden flex items-center justify-around px-6 z-[150]">
+        <a href="/" class="dock-item active">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span class="uppercase tracking-widest">FEED</span>
+            <div class="dock-dot"></div>
+        </a>
+        <button id="dock-explore" class="dock-item">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            <span class="uppercase tracking-widest">EXPLORE</span>
+            <div class="dock-dot"></div>
+        </button>
+        <button id="dock-search" class="dock-item">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="uppercase tracking-widest">SEARCH</span>
+            <div class="dock-dot"></div>
+        </button>
+        <a href="/" class="dock-item">
+            <div class="relative mb-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            </div>
+            <span class="uppercase tracking-widest">LATEST</span>
+            <div class="dock-dot"></div>
+        </a>
+    </div>
+
+    <main class="main-canvas">
+        
+<!-- NEW: SEARCH RESULTS INDICATOR -->
+
+
+<!-- TOP AD SLOT -->
+
+<div class="nusa-ads-container my-12 text-center overflow-hidden">
+    <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.4em] mb-4">Advertisement</p>
+    <div class="inline-block min-h-[90px]">
+        <script data-cfasync="false">atOptions = { "key" : "9502012beac003ce947eea571cc4b4bc", "format" : "iframe", "height" : 60, "width" : 468, "params" : {} };</script><script data-cfasync="false" src="https://divorceabetpiano.com/9502012beac003ce947eea571cc4b4bc/invoke.js"></script>
+    </div>
+</div>
+
+
+<!-- NEW: HORIZONTAL CATEGORY SCROLL (MOBILE ONLY & STICKY) -->
+<div class="lg:hidden sticky top-[80px] -mx-6 mb-12 px-6 overflow-x-auto no-scrollbar flex items-center space-x-8 border-b border-black/5 pt-3 pb-4 bg-[var(--bg-editorial)] z-40">
+    <a href="/" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-red-600 border-b-2 border-red-600 pb-1">
+        ALL STORY
+    </a>
+    
+        <a href="/?cat=DETIKTV" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            DETIKTV
+        </a>
+    
+        <a href="/?cat=EKONOMI" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            EKONOMI
+        </a>
+    
+        <a href="/?cat=GAYA HIDUP" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            GAYA HIDUP
+        </a>
+    
+        <a href="/?cat=HIBURAN" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            HIBURAN
+        </a>
+    
+        <a href="/?cat=INTERNASIONAL" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            INTERNASIONAL
+        </a>
+    
+        <a href="/?cat=NASIONAL" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            NASIONAL
+        </a>
+    
+        <a href="/?cat=NEWS" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            NEWS
+        </a>
+    
+        <a href="/?cat=OLAHRAGA" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            OLAHRAGA
+        </a>
+    
+        <a href="/?cat=TEKNOLOGI" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            TEKNOLOGI
+        </a>
+    
+        <a href="/?cat=TOPIK KHUSUS" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            TOPIK KHUSUS
+        </a>
+    
+        <a href="/?cat=VIDEO" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
+            VIDEO
+        </a>
+    
+</div>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 lg:gap-24 relative">
+    
+    <!-- LEFT COLUMN: HERO ARTICLE (THE STORY) -->
+    <section class="space-y-12">
+        
+            
+            <article class="relative group border-b border-black/5 pb-20">
+                <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-12 mb-16">
+                    <!-- Title & Lead -->
+                    <div class="space-y-12">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="px-4 py-1.5 bg-black text-white text-[9px] font-black uppercase tracking-[0.2em] rounded-full">
+                                TOPIK KHUSUS
+                            </span>
+                            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                Premium Story
+                            </span>
+                        </div>
+                        <h1 class="hero-title font-serif text-gray-900 group-hover:text-red-600 transition-colors">
+                            <a href="/article/782cca33c25f/">
+                                Berita dan Informasi Amerika serikat Terkini dan Terbaru Hari ini - detikcom
+                            </a>
+                        </h1>
+                        <p class="text-xl text-gray-500 leading-relaxed font-light italic">
+                            Jurnalistik mendalam dari seluruh penjuru negeri, menyajikan fakta dengan perspektif yang berbeda dan visual yang mendalam.
+                        </p>
+                    </div>
+
+                    <!-- Hero Meta (Right Aligned) -->
+                    <div class="text-left md:text-right space-y-12 border-l border-black/5 pl-8 md:pl-12">
+                        <div class="space-y-10 pt-10">
+                            <div>
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Written By</p>
+                                <p class="text-lg font-serif italic font-medium text-gray-800">Redaksi</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Published</p>
+                                <p class="text-sm font-bold text-gray-800 uppercase tracking-widest">2026-03-24</p>
+                            </div>
+                            <div class="flex flex-col items-start md:items-end gap-6 pt-10">
+                                <button class="w-12 h-12 rounded-full border border-black/5 flex items-center justify-center hover:bg-black hover:text-white transition-all shadow-sm">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                                </button>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">LISTEN STORY</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Image (Full Width) -->
+                <div class="relative w-full aspect-video md:aspect-[21/9] overflow-hidden rounded-2xl md:rounded-[24px] bg-gray-200 shadow-xl md:shadow-2xl">
+                    
+                        <img src="https://cdn.detik.net.id/detik2/images/logo.jpg" alt="Berita dan Informasi Amerika serikat Terkini dan Terbaru Hari ini - detikcom" class="editorial-img w-full h-full object-cover">
+                        
+                    
+                </div>
+            </article>
+            
+
+            <!-- Remaining Large Grid (Below Hero) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 pt-10 md:pt-16">
+                
+                <article class="group">
+                    <div class="aspect-video md:aspect-[4/3] overflow-hidden rounded-xl md:rounded-[20px] bg-gray-200 mb-6 md:mb-8 relative shadow-md group-hover:shadow-xl transition-all">
+                        
+                            <img src="https://awsimages.detik.net.id/api/wm/2025/06/26/potret-selat-hormuz-titik-rawan-jalur-minyak-dunia-1750908812910_169.jpeg?wid=54&amp;w=1200&amp;v=1&amp;t=jpeg" alt="Arab Saudi Sebut Gangguan Iran di Selat Hormuz Bahaya, Ancam Keamanan Energi" class="editorial-img w-full h-full object-cover">
+                            
+                        
+                    </div>
+                    <p class="text-[9px] font-black text-red-500 uppercase tracking-[0.3em] mb-3 md:mb-4">NEWS</p>
+                    <h2 class="text-2xl md:text-3xl font-serif font-semibold text-gray-900 leading-tight group-hover:underline transition-all">
+                        <a href="/article/8414062/">Arab Saudi Sebut Gangguan Iran di Selat Hormuz Bahaya, Ancam Keamanan Energi</a>
+                    </h2>
+                    <p class="text-sm text-gray-500 mt-4 md:mt-6 leading-relaxed line-clamp-2">
+                        Analisa mendalam terkait peristiwa hari ini dengan fokus pada fakta dan keaslian informasi yang terverifikasi secara global.
+                    </p>
+                </article>
+                
+                <article class="group">
+                    <div class="aspect-video md:aspect-[4/3] overflow-hidden rounded-xl md:rounded-[20px] bg-gray-200 mb-6 md:mb-8 relative shadow-md group-hover:shadow-xl transition-all">
+                        
+                            <img src="https://awsimages.detik.net.id/api/wm/2026/03/24/tak-ada-kendaraan-yang-parkir-di-bahu-jalan-sekitar-kawasan-monas-1774335327142_169.jpeg?wid=54&amp;w=1200&amp;v=1&amp;t=jpeg" alt="Parkir Liar di Sekitar Monas Berujung Ban Mobil Dikempesi" class="editorial-img w-full h-full object-cover">
+                            
+                        
+                    </div>
+                    <p class="text-[9px] font-black text-red-500 uppercase tracking-[0.3em] mb-3 md:mb-4">NEWS</p>
+                    <h2 class="text-2xl md:text-3xl font-serif font-semibold text-gray-900 leading-tight group-hover:underline transition-all">
+                        <a href="/article/8414064/">Parkir Liar di Sekitar Monas Berujung Ban Mobil Dikempesi</a>
+                    </h2>
+                    <p class="text-sm text-gray-500 mt-4 md:mt-6 leading-relaxed line-clamp-2">
+                        Analisa mendalam terkait peristiwa hari ini dengan fokus pada fakta dan keaslian informasi yang terverifikasi secara global.
+                    </p>
+                </article>
+                
+                <article class="group">
+                    <div class="aspect-video md:aspect-[4/3] overflow-hidden rounded-xl md:rounded-[20px] bg-gray-200 mb-6 md:mb-8 relative shadow-md group-hover:shadow-xl transition-all">
+                        
+                            <img src="https://awsimages.detik.net.id/api/wm/2026/03/24/wanita-disabilitas-asal-jaktim-sempat-hilang-3-hari-kini-ditemukan-di-bogor-1774370779582_169.jpeg?wid=54&amp;w=1200&amp;v=1&amp;t=jpeg" alt="Hilang 3 Hari, Wanita Disabilitas Asal Jaktim Ditemukan di Aliran Sungai Bogor" class="editorial-img w-full h-full object-cover">
+                            
+                        
+                    </div>
+                    <p class="text-[9px] font-black text-red-500 uppercase tracking-[0.3em] mb-3 md:mb-4">NEWS</p>
+                    <h2 class="text-2xl md:text-3xl font-serif font-semibold text-gray-900 leading-tight group-hover:underline transition-all">
+                        <a href="/article/8414066/">Hilang 3 Hari, Wanita Disabilitas Asal Jaktim Ditemukan di Aliran Sungai Bogor</a>
+                    </h2>
+                    <p class="text-sm text-gray-500 mt-4 md:mt-6 leading-relaxed line-clamp-2">
+                        Analisa mendalam terkait peristiwa hari ini dengan fokus pada fakta dan keaslian informasi yang terverifikasi secara global.
+                    </p>
+                </article>
+                
+                <article class="group">
+                    <div class="aspect-video md:aspect-[4/3] overflow-hidden rounded-xl md:rounded-[20px] bg-gray-200 mb-6 md:mb-8 relative shadow-md group-hover:shadow-xl transition-all">
+                        
+                            <img src="https://awsimages.detik.net.id/api/wm/2026/03/25/pria-di-tangerang-panjat-reklame-diduga-hendak-bunuh-diri-1774372529055_169.jpeg?wid=54&amp;w=1200&amp;v=1&amp;t=jpeg" alt="Heboh Pria di Tangerang Panjat Papan Reklame Diduga Hendak Bunuh Diri" class="editorial-img w-full h-full object-cover">
+                            
+                        
+                    </div>
+                    <p class="text-[9px] font-black text-red-500 uppercase tracking-[0.3em] mb-3 md:mb-4">NEWS</p>
+                    <h2 class="text-2xl md:text-3xl font-serif font-semibold text-gray-900 leading-tight group-hover:underline transition-all">
+                        <a href="/article/8414068/">Heboh Pria di Tangerang Panjat Papan Reklame Diduga Hendak Bunuh Diri</a>
+                    </h2>
+                    <p class="text-sm text-gray-500 mt-4 md:mt-6 leading-relaxed line-clamp-2">
+                        Analisa mendalam terkait peristiwa hari ini dengan fokus pada fakta dan keaslian informasi yang terverifikasi secara global.
+                    </p>
+                </article>
+                
+            </div>
+
+            <!-- NEW: PREMIUM EDITORIAL PAGINATION -->
+            <div class="mt-24 pt-16 border-t border-black/5 flex flex-col md:flex-row justify-between items-center gap-10">
+                <div class="flex items-center space-x-12">
+                    
+                    <span class="opacity-20 flex items-center text-[10px] font-black uppercase tracking-[0.4em] cursor-not-allowed">
+                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        First Page
+                    </span>
+                    
+
+                    <div class="h-8 w-px bg-black/5 hidden md:block"></div>
+
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                        Editorial Page <span class="text-gray-900 ml-2">#1</span>
+                    </p>
+                </div>
+
+                
+                <a href="?page=2" class="group flex items-center text-[10px] font-black uppercase tracking-[0.4em] hover:text-red-600 transition-colors">
+                    Next Insights
+                    <svg class="w-4 h-4 ml-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+                
+            </div>
+
+        
+    </section>
+
+    <!-- RIGHT COLUMN: MODULAR STACK (THE DASHBOARD) -->
+    <aside class="space-y-10">
+        <!-- SIDEBAR AD SLOT -->
+        
+        <div class="nusa-ads-container text-center mb-10">
+            <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.4em] mb-4">Advertisement</p>
+            <script data-cfasync="false">atOptions = { "key" : "561a92480bec28f20854c1188a28000f", "format" : "iframe", "height" : 250, "width" : 300, "params" : {} };</script><script data-cfasync="false" src="https://divorceabetpiano.com/561a92480bec28f20854c1188a28000f/invoke.js"></script>
+        </div>
+        
+
+        <!-- Feature Card 1: DRAW INSPIRATION -->
+        <div class="modular-card p-10 bg-white group">
+            <div class="flex justify-between items-start mb-10">
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Inspiration</span>
+                <span class="w-8 h-8 rounded-full border border-black/5 flex items-center justify-center text-[10px] font-bold">I</span>
+            </div>
+            <h3 class="text-3xl font-serif font-bold italic text-gray-800 leading-tight mb-8">"Simplicity is the ultimate sophistication."</h3>
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Leonardo Da Vinci</p>
+            <div class="mt-12 h-px bg-black/5 w-full"></div>
+            <div class="mt-8 flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-gray-300">
+                <span>Reading Time</span>
+                <span>4 Min</span>
+            </div>
+        </div>
+
+        <!-- Latest Articles List Card -->
+        <div class="modular-card p-10 bg-white">
+            <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-10 pb-6 border-b border-black/5">The Feed Queue</h4>
+            <div class="space-y-12">
+                
+                <div class="group cursor-pointer">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">NEWS</p>
+                    <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
+                        <a href="/article/8414069/">Kemenpar Ungkap 4,2 Juta Warga DKI Tak Mudik, Harap Bisa Liburan di Jakarta</a>
+                    </h5>
+                    <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">2026-03-24</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">VIDEO</p>
+                    <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
+                        <a href="/article/b210b3b826e5/">Video 12 Jam Diperiksa, Keluarga Ungkap soal KDRT dalam Kasus Pembunuhan Cucu Mpok Nori</a>
+                    </h5>
+                    <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">2026-03-24</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">NEWS</p>
+                    <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
+                        <a href="/article/8414086/">Polisi Patroli di Pesisir Tangerang, Ingatkan Kapal Tak Angkut Muatan Berlebih</a>
+                    </h5>
+                    <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">2026-03-24</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">NEWS</p>
+                    <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
+                        <a href="/article/8413531/">One Way Arus Balik Dimulai, Kapolri Pastikan Rekayasa Lalin-Tol Fungsional Siap</a>
+                    </h5>
+                    <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">2026-03-24</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">NEWS</p>
+                    <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
+                        <a href="/article/8414071/">Arus Balik Lebaran, Sejumlah Titik Tol Arah Jakarta Padat Malam Ini</a>
+                    </h5>
+                    <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">2026-03-24</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">NEWS</p>
+                    <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
+                        <a href="/article/8414074/">Jalur Pantura Pasuruan Terendam Banjir Malam Ini, Lalin Lumpuh</a>
+                    </h5>
+                    <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">2026-03-24</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">DETIKTV</p>
+                    <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
+                        <a href="/article/7858480/">Video: Hadapi Post Holiday Blues, Bangun Kembali Semangat Seusai Libur Panjang</a>
+                    </h5>
+                    <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">2026-03-24</p>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Data/Stats Grid Card (DNA Point 6.D) -->
+        <div class="modular-card p-10 bg-white border border-black/5 shadow-sm">
+            <h4 class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-12">Data Insights</h4>
+            <div class="grid grid-cols-2 gap-y-12 gap-x-10">
+                <div class="space-y-3">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Sources</p>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-4xl font-serif font-black text-gray-900 leading-none">11</span>
+                        <span class="text-[10px] font-black text-green-500 uppercase">+12%</span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Verified</p>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-4xl font-serif font-black text-gray-900 leading-none">98%</span>
+                        <span class="text-[10px] font-black text-blue-500 uppercase">Stable</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-black/5">
+                <div class="flex justify-between items-center">
+                    <span class="text-[9px] font-black text-gray-300 uppercase tracking-widest">Global Status</span>
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media Modular Card -->
+        <div class="modular-card p-10 bg-gray-50">
+            <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-10 text-center">Follow Island</h4>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="aspect-square rounded-2xl bg-white flex items-center justify-center hover:bg-black hover:text-white transition-all shadow-sm cursor-pointer text-sm font-bold">X</div>
+                <div class="aspect-square rounded-2xl bg-white flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm cursor-pointer text-sm font-bold">IG</div>
+                <div class="aspect-square rounded-2xl bg-white flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm cursor-pointer text-sm font-bold">YT</div>
+                <div class="aspect-square rounded-2xl bg-white flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm cursor-pointer text-sm font-bold">FB</div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+    </main>
+
+    <footer class="max-w-[1320px] mx-auto px-10 py-20 border-t border-black/5 mt-20 text-center">
+        <span class="brand-logo text-xl uppercase">suara<span class="italic">nusa</span></span>
+        <p class="mt-8 text-gray-500 text-sm italic">&copy; 2026 suaranusa magazine</p>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const dockExplore = document.getElementById('dock-explore');
+        const menuClose = document.getElementById('menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        const searchToggle = document.getElementById('search-toggle');
+        const dockSearch = document.getElementById('dock-search');
+        const searchClose = document.getElementById('search-close');
+        const searchOverlay = document.getElementById('search-overlay');
+
+        // NEW: DESKTOP DROPDOWN LOGIC
+        const desktopMenuToggle = document.getElementById('desktop-menu-toggle');
+        const desktopDropdown = document.getElementById('desktop-dropdown');
+
+        const toggleDesktopDropdown = (e) => {
+            e.stopPropagation();
+            const isVisible = desktopDropdown.style.display === 'block';
+            desktopDropdown.style.display = isVisible ? 'none' : 'block';
+        };
+
+        if(desktopMenuToggle) desktopMenuToggle.addEventListener('click', toggleDesktopDropdown);
+
+        // NEW: READER MODE LOGIC
+        const readerToggle = document.getElementById('reader-mode-toggle');
+        const readerToggleMobile = document.getElementById('reader-mode-toggle-mobile');
+        const readerToggleDropdown = document.getElementById('reader-mode-toggle-dropdown');
+        
+        const applyReaderMode = (isActive) => {
+            if (isActive) {
+                document.body.classList.add('reader-active');
+                if(readerToggle) readerToggle.innerText = 'Normal Mode';
+                if(readerToggleDropdown) readerToggleDropdown.innerText = 'Normal Mode';
+            } else {
+                document.body.classList.remove('reader-active');
+                if(readerToggle) readerToggle.innerText = 'Reader Mode';
+                if(readerToggleDropdown) readerToggleDropdown.innerText = 'Reader Mode';
+            }
+        };
+
+        // Check preference
+        const isReaderActive = localStorage.getItem('readerMode') === 'true';
+        applyReaderMode(isReaderActive);
+
+        const handleToggle = () => {
+            const active = !document.body.classList.contains('reader-active');
+            applyReaderMode(active);
+            localStorage.setItem('readerMode', active);
+        };
+
+        if(readerToggle) readerToggle.addEventListener('click', handleToggle);
+        if(readerToggleMobile) readerToggleMobile.addEventListener('click', handleToggle);
+        if(readerToggleDropdown) readerToggleDropdown.addEventListener('click', handleToggle);
+
+        // Close dropdown when clicking anywhere else
+        document.addEventListener('click', (e) => {
+            if (desktopDropdown && !desktopDropdown.contains(e.target) && e.target !== desktopMenuToggle) {
+                desktopDropdown.style.display = 'none';
+            }
+        });
+
+        const openMenu = () => { mobileMenu.style.transform = 'translateX(0)'; document.body.style.overflow = 'hidden'; };
+        const closeMenu = () => { mobileMenu.style.transform = 'translateX(-100%)'; document.body.style.overflow = 'auto'; };
+        
+        const openSearch = () => { searchOverlay.classList.remove('hidden'); document.body.style.overflow = 'hidden'; searchOverlay.querySelector('input').focus(); };
+        const closeSearch = () => { searchOverlay.classList.add('hidden'); document.body.style.overflow = 'auto'; };
+
+        if(menuToggle) menuToggle.addEventListener('click', openMenu);
+        if(dockExplore) dockExplore.addEventListener('click', openMenu);
+        if(menuClose) menuClose.addEventListener('click', closeMenu);
+        
+        if(searchToggle) searchToggle.addEventListener('click', openSearch);
+        if(dockSearch) dockSearch.addEventListener('click', openSearch);
+        if(searchClose) searchClose.addEventListener('click', closeSearch);
+        
+        // Close on ESC
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') { closeMenu(); closeSearch(); }
+        });
+    </script>
+
+    <!-- ADSTERRA SOCIAL BAR -->
+    
+        <script data-cfasync="false" src="https://divorceabetpiano.com/da/8d/e5/da8de54d84804868176c52d2a7df9643.js"></script>
+    
+</body>
+</html>

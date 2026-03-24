@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* Force Tailwind v4 to scan ALL relevant files */
+@source "../../templates/**/*.html";
+@source "../../portal/views/**/*.py";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  
+  --color-nusa-red: #ff3b30;
+  --color-nusa-bg: #f7f7f5;
+  --color-nusa-dark: #0a0a0a;
+  
+  --letter-spacing-luxury: 0.12em;
+  --letter-spacing-editorial: 0.4em;
+}
+
+/* Explicit Utilities for Sidebar */
+.sidebar-label {
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4em !important;
+  margin-bottom: 1rem !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.tag-badge {
+  display: inline-block !important;
+  padding: 0.625rem 1.25rem !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  border-radius: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.2s ease !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.tag-badge:hover {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Global transitions */
+* {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

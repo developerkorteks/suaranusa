@@ -139,6 +139,41 @@
                 {% endfor %}
             </div>
 
+            <!-- NEW: PREMIUM EDITORIAL PAGINATION -->
+            <div class="mt-24 pt-16 border-t border-black/5 flex flex-col md:flex-row justify-between items-center gap-10">
+                <div class="flex items-center space-x-12">
+                    {% if has_prev %}
+                    <a href="?page={{ prev_page }}{% if selected_category %}&cat={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" class="group flex items-center text-[10px] font-black uppercase tracking-[0.4em] hover:text-red-600 transition-colors">
+                        <svg class="w-4 h-4 mr-3 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Step
+                    </a>
+                    {% else %}
+                    <span class="opacity-20 flex items-center text-[10px] font-black uppercase tracking-[0.4em] cursor-not-allowed">
+                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        First Page
+                    </span>
+                    {% endif %}
+
+                    <div class="h-8 w-px bg-black/5 hidden md:block"></div>
+
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                        Editorial Page <span class="text-gray-900 ml-2">#{{ page }}</span>
+                    </p>
+                </div>
+
+                {% if has_next %}
+                <a href="?page={{ next_page }}{% if selected_category %}&cat={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" class="group flex items-center text-[10px] font-black uppercase tracking-[0.4em] hover:text-red-600 transition-colors">
+                    Next Insights
+                    <svg class="w-4 h-4 ml-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+                {% else %}
+                <span class="opacity-20 flex items-center text-[10px] font-black uppercase tracking-[0.4em] cursor-not-allowed">
+                    End of Archive
+                    <svg class="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </span>
+                {% endif %}
+            </div>
+
         {% else %}
             <div class="py-40 text-center">
                 <span class="hero-title opacity-10">NO DATA FOUND</span>
