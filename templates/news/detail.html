@@ -176,7 +176,7 @@
                     <p class="sidebar-label">Topics Covered</p>
                     <div class="flex flex-wrap gap-3 mt-6">
                         {% for tag in article.tags %}
-                            <span class="tag-badge">#{{ tag }}</span>
+                            <a href="{% url 'portal:home' %}?q={{ tag }}" class="tag-badge">#{{ tag }}</a>
                         {% endfor %}
                     </div>
                 </div>

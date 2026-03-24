@@ -31,15 +31,26 @@ class AdSlot(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        # Clear ad caches on any change
-        cache.delete('active_ad_slots_mobile')
-        cache.delete('active_ad_slots_desktop')
         super().save(*args, **kwargs)
+        self.repopulate_cache()
 
     def delete(self, *args, **kwargs):
-        cache.delete('active_ad_slots_mobile')
-        cache.delete('active_ad_slots_desktop')
         super().delete(*args, **kwargs)
+        self.repopulate_cache()
+
+    def repopulate_cache(self):
+        # Local import to avoid circular dependencies
+        from django.core.cache import cache
+        active_slots = AdSlot.objects.filter(is_active=True)
+        data = []
+        for slot in active_slots:
+            data.append({
+                'slug': slot.position_slug,
+                'm_script': slot.mobile_script,
+                'd_script': slot.desktop_script,
+                'd_url': slot.direct_url
+            })
+        cache.set('active_ad_slots_data', data, None)
 
     def __str__(self):
         status = "Active" if self.is_active else "Inactive"

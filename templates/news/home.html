@@ -16,9 +16,9 @@
 
 <!-- TOP AD SLOT -->
 {% if ads.top_leaderboard %}
-<div class="nusa-ads-container my-12 text-center overflow-hidden">
+<div class="nusa-ads-container my-8 md:my-12 text-center">
     <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.4em] mb-4">Advertisement</p>
-    <div class="inline-block min-h-[90px]">
+    <div class="flex justify-center w-full overflow-x-auto no-scrollbar">
         {{ ads.top_leaderboard|cloudflare_safe }}
     </div>
 </div>
@@ -211,13 +211,13 @@
             <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-10 pb-6 border-b border-black/5">The Feed Queue</h4>
             <div class="space-y-12">
                 {% for article in articles|slice:"5:12" %}
-                <div class="group cursor-pointer">
+                <a href="{% url 'portal:article_detail' article.id %}" class="group block cursor-pointer">
                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">{{ article.category }}</p>
                     <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
-                        <a href="{% url 'portal:article_detail' article.id %}">{{ article.title }}</a>
+                        {{ article.title }}
                     </h5>
                     <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-4">{{ article.date }}</p>
-                </div>
+                </a>
                 {% endfor %}
             </div>
         </div>
