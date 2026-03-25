@@ -1,5 +1,6 @@
 from django.views import View
 from django.shortcuts import render
+from django.utils.text import slugify
 from portal.services.api_client import ApiService
 from urllib.parse import urlparse
 import logging
@@ -84,6 +85,7 @@ class HomePageView(View):
             article_obj = {
                 'id': item.get('id'),
                 'title': title or "Berita Terkini",
+                'slug': slugify(title or "berita-terkini"),
                 'image': item.get("image") or (metadata.get("images")[0].get("url") if metadata.get("images") else None),
                 'category': clean_category,
                 'author': item.get('author') or "Redaksi",

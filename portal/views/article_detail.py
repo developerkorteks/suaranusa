@@ -1,5 +1,6 @@
 from django.views import View
 from django.shortcuts import render, Http404
+from django.utils.text import slugify
 from portal.services.api_client import ApiService
 from urllib.parse import urlparse
 import logging
@@ -40,7 +41,7 @@ class ArticleDetailView(View):
         
         return "WARTA UTAMA"
 
-    async def get(self, request, article_id):
+    async def get(self, request, article_id, slug=None):
         api_service = ApiService()
         
         # 1. Fetch with Retry Logic
@@ -74,6 +75,7 @@ class ArticleDetailView(View):
 
         # 3. Dynamic Mapping & Anonymization
         parsed_url = urlparse(raw_article.get('url') or "https://detik.com")
+        current_category = self.resolve_category(raw_article)
         
         article = {
             'id': raw_article.get('id'),
@@ -83,13 +85,30 @@ class ArticleDetailView(View):
             'content': raw_article.get('content') or "",
             'author': raw_article.get('author') or "Redaksi Utama",
             'source_display': parsed_url.netloc.replace("www.", ""),
-            'category': self.resolve_category(raw_article),
+            'category': current_category,
             'scraped_at': raw_article.get('scraped_at'),
             'quality_score': raw_article.get('quality_score', 0.75),
             'tags': raw_article.get('tags', []),
             'all_images': self._normalize_media(metadata.get('images') or []),
             'all_videos': self._normalize_media(metadata.get('videos') or [])
         }
+
+        # 4. Fetch Related Articles (Same Category)
+        related_raw = await api_service.get_articles(limit=10, category=current_category)
+        related_articles = []
+        for item in related_raw:
+            if str(item.get('id')) == str(article_id):
+                continue
+            
+            title = item.get("title") or "Berita Terkait"
+            related_articles.append({
+                'id': item.get('id'),
+                'title': title,
+                'slug': slugify(title),
+                'category': current_category,
+                'date': (item.get('publish_date') or item.get('scraped_at') or "")[:10]
+            })
+            if len(related_articles) >= 6: break
 
         # Fix thumbnail quality in all_images
         for img in article['all_images']:
@@ -100,7 +119,13 @@ class ArticleDetailView(View):
         if article['image'] and not any(m['url'] == article['image'] for m in article['all_images']):
             article['all_images'].insert(0, {'url': article['image'], 'alt': 'Foto Utama'})
 
-        return render(request, "news/detail.html", {"article": article})
+        context = {
+            "article": article,
+            "related_articles": related_articles
+        }
+
+        return render(request, "news/detail.html", context)
+
 
     def _normalize_media(self, media_list):
         if not media_list: return []

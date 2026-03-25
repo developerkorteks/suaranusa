@@ -60,7 +60,7 @@
                             </span>
                         </div>
                         <h1 class="hero-title font-serif text-gray-900 group-hover:text-red-600 transition-colors">
-                            <a href="{% url 'portal:article_detail' hero.id %}">
+                            <a href="{% url 'portal:article_detail_slug' hero.id hero.slug %}">
                                 {{ hero.title|truncatewords:15 }}
                             </a>
                         </h1>
@@ -116,7 +116,7 @@
                 <article class="group">
                     <div class="aspect-video md:aspect-[4/3] overflow-hidden rounded-xl md:rounded-[20px] bg-gray-200 mb-6 md:mb-8 relative shadow-md group-hover:shadow-xl transition-all">
                         {% if article.image %}
-                            <img src="{{ article.image }}" alt="{{ article.title }}" class="editorial-img w-full h-full object-cover">
+                            <img src="{{ article.image }}" alt="{{ article.title|escape }}" loading="lazy" class="editorial-img w-full h-full object-cover">
                             {% if article.is_video %}
                                 <div class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-all">
                                     <div class="w-12 h-12 md:w-14 md:h-14 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
@@ -130,7 +130,7 @@
                     </div>
                     <p class="text-[9px] font-black text-red-500 uppercase tracking-[0.3em] mb-3 md:mb-4">{{ article.category }}</p>
                     <h2 class="text-2xl md:text-3xl font-serif font-semibold text-gray-900 leading-tight group-hover:underline transition-all">
-                        <a href="{% url 'portal:article_detail' article.id %}">{{ article.title }}</a>
+                        <a href="{% url 'portal:article_detail_slug' article.id article.slug %}">{{ article.title }}</a>
                     </h2>
                     <p class="text-sm text-gray-500 mt-4 md:mt-6 leading-relaxed line-clamp-2">
                         Analisa mendalam terkait peristiwa hari ini dengan fokus pada fakta dan keaslian informasi yang terverifikasi secara global.
@@ -211,7 +211,7 @@
             <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-10 pb-6 border-b border-black/5">The Feed Queue</h4>
             <div class="space-y-12">
                 {% for article in articles|slice:"5:12" %}
-                <a href="{% url 'portal:article_detail' article.id %}" class="group block cursor-pointer">
+                <a href="{% url 'portal:article_detail_slug' article.id article.slug %}" class="group block cursor-pointer">
                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">{{ article.category }}</p>
                     <h5 class="text-lg font-serif font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
                         {{ article.title }}

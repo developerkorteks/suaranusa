@@ -20,9 +20,15 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
+from portal.views.seo import RobotsTxtView, SitemapXmlView, LatestNewsFeedView, ServiceWorkerView, ManifestJsonView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("robots.txt", RobotsTxtView.as_view(), name="robots_txt"),
+    path("sitemap.xml", SitemapXmlView.as_view(), name="sitemap_xml"),
+    path("feed/", LatestNewsFeedView.as_view(), name="news_feed"),
+    path("sw.js", ServiceWorkerView.as_view(), name="service_worker"),
+    path("manifest.json", ManifestJsonView.as_view(), name="manifest_json"),
     path("", include("portal.urls", namespace="portal")),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

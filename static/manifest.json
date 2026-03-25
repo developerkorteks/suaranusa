@@ -1,0 +1,22 @@
+{
+  "name": "suaranusa | Premium Editorial",
+  "short_name": "suaranusa",
+  "description": "Portal berita premium suaranusa menyajikan jurnalisme mendalam dan terpercaya.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f7f5",
+  "theme_color": "#0a0a0a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/static/images/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
