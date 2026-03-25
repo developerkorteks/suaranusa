@@ -61,13 +61,13 @@
 </script>
 
 <!-- NEW: READING PROGRESS BAR (STICKY) -->
-<div id="progress-container" class="fixed top-0 left-0 w-full h-[3px] bg-transparent z-[200]">
-    <div id="progress-bar" class="h-full bg-red-600 w-0 transition-all duration-100 ease-out shadow-[0_0_10px_rgba(255,59,48,0.5)]"></div>
+<div id="progress-container" class="fixed top-0 left-0 w-full h-[4px] bg-transparent z-[1000]">
+    <div id="progress-bar" class="h-full bg-red-600 w-0 transition-all duration-100 ease-out shadow-[0_0_15px_rgba(255,59,48,0.8)]"></div>
 </div>
 
 <script>
     window.addEventListener('scroll', () => {
-        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const winScroll = document.documentElement.scrollTop;
         const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (winScroll / height) * 100;
         document.getElementById('progress-bar').style.width = scrolled + "%";
