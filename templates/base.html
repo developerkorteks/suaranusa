@@ -17,6 +17,20 @@
     <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <!-- ANTI-FLASH & THEME SCRIPT -->
+    <script>
+        (function() {
+            try {
+                const mode = localStorage.getItem('readerMode');
+                if (mode === 'true') {
+                    document.documentElement.classList.add('reader-active');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <meta id="theme-meta" name="theme-color" content="#f7f7f5">
+
     <style>
         :root {
             --bg-editorial: #f7f7f5;
@@ -24,6 +38,13 @@
             --text-primary: #111111;
             --text-secondary: #555555;
         }
+
+        /* Target HTML for earliest possible theme application */
+        html.reader-active {
+            --bg-editorial: #0a0a0a;
+            background-color: #0a0a0a !important;
+        }
+
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: var(--bg-editorial);
@@ -31,6 +52,145 @@
             -webkit-font-smoothing: antialiased;
             padding-bottom: 80px;
         }
+
+        /* Reader Mode Styles (Updated to support HTML class) */
+        html.reader-active body {
+            background-color: #0a0a0a !important;
+            color: #dddddd !important;
+        }
+        
+        html.reader-active .main-canvas,
+        html.reader-active .sticky-header,
+        html.reader-active #mobile-menu,
+        html.reader-active #search-overlay {
+            background-color: #0a0a0a !important;
+        }
+
+        /* Category Bar Fix */
+        html.reader-active .sticky.top-\[80px\] {
+            background-color: #0a0a0a !important;
+            border-bottom-color: rgba(255,255,255,0.1) !important;
+        }
+        html.reader-active .sticky.top-\[80px\] a {
+            color: #888888 !important;
+        }
+        html.reader-active .sticky.top-\[80px\] a.text-red-600 {
+            color: var(--accent-red) !important;
+            border-bottom-color: var(--accent-red) !important;
+        }
+
+        /* Override Background Utilities */
+        html.reader-active .bg-white,
+        html.reader-active .bg-gray-50,
+        html.reader-active .bg-gray-100,
+        html.reader-active .bg-gray-200,
+        html.reader-active .bg-gray-300,
+        html.reader-active .modular-card {
+            background-color: #161616 !important;
+            color: #dddddd !important;
+        }
+
+        /* Typography Inversion */
+        html.reader-active .text-gray-900,
+        html.reader-active .text-gray-800,
+        html.reader-active .text-black,
+        html.reader-active h1, html.reader-active h2, html.reader-active h3, 
+        html.reader-active h4, html.reader-active h5, html.reader-active h6,
+        html.reader-active .brand-logo,
+        html.reader-active .font-serif,
+        html.reader-active a {
+            color: #ffffff !important;
+        }
+
+        html.reader-active .text-gray-700,
+        html.reader-active .text-gray-600,
+        html.reader-active .text-gray-500 {
+            color: #bbbbbb !important;
+        }
+
+        html.reader-active .text-gray-400,
+        html.reader-active .text-gray-300,
+        html.reader-active .text-white\/30,
+        html.reader-active .text-white\/70,
+        html.reader-active .text-white\/20 {
+            color: #888888 !important;
+        }
+
+        /* Interactive Elements */
+        html.reader-active a:hover {
+            color: var(--accent-red) !important;
+        }
+        html.reader-active .border,
+        html.reader-active .border-t,
+        html.reader-active .border-b,
+        html.reader-active .border-l,
+        html.reader-active .border-black\/5,
+        html.reader-active .border-white\/10 {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Specific Component Fixes */
+        html.reader-active .bg-black {
+            background-color: #222222 !important;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        html.reader-active .highlight-red {
+            background-color: var(--accent-red) !important;
+            color: white !important;
+        }
+        html.reader-active .dropdown-menu {
+            background-color: #1a1a1a !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+
+        /* Tailwind Prose Inversion */
+        html.reader-active .prose {
+            --tw-prose-body: #dddddd;
+            --tw-prose-headings: #ffffff;
+            --tw-prose-links: #ffffff;
+            --tw-prose-bold: #ffffff;
+            --tw-prose-quotes: #eeeeee;
+            --tw-prose-captions: #888888;
+            --tw-prose-hr: #333333;
+        }
+
+        /* Reader Mode Layout Logic */
+        html.reader-active article.space-y-16 + aside { display: none !important; }
+        html.reader-active article.space-y-16 {
+            grid-column: span 3 / span 3 !important;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Ads in Reader Mode */
+        html.reader-active .nusa-ads-container {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background-color: #111111 !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+        html.reader-active .nusa-ads-container p {
+            color: #ff3b30 !important;
+        }
+
+        /* Toggle Button States */
+        html.reader-active #reader-mode-toggle,
+        html.reader-active #reader-mode-toggle-dropdown {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            border-color: #ffffff !important;
+        }
+        html.reader-active #reader-mode-toggle-mobile {
+            color: var(--accent-red) !important;
+        }
+        html.reader-active .mobile-dock {
+            background: rgba(10, 10, 10, 0.95) !important;
+            border-top-color: rgba(255,255,255,0.1) !important;
+        }
+        html.reader-active .dock-item.active { color: #ffffff !important; }
+
         @media (min-width: 1024px) { body { padding-bottom: 0; } }
         
         .font-serif { font-family: 'Playfair Display', serif; }
@@ -314,20 +474,7 @@
         body.reader-active .dock-item.active { color: #ffffff !important; }
     </style>
 </head>
-<body class="antialiased transition-colors duration-200">
-    <!-- ANTI-FLASH SCRIPT: Apply theme before browser paints -->
-    <script>
-        (function() {
-            try {
-                const mode = localStorage.getItem('readerMode');
-                if (mode === 'true') {
-                    document.body.classList.add('reader-active');
-                }
-            } catch (e) {
-                console.error("Theme initialization failed:", e);
-            }
-        })();
-    </script>
+<body class="antialiased">
     <!-- UNIFIED STICKY HEADER -->
     <header class="sticky-header">
         <div class="max-w-[1320px] mx-auto px-4 md:px-10 py-6">
@@ -496,25 +643,28 @@
         const readerToggle = document.getElementById('reader-mode-toggle');
         const readerToggleMobile = document.getElementById('reader-mode-toggle-mobile');
         const readerToggleDropdown = document.getElementById('reader-mode-toggle-dropdown');
+        const themeMeta = document.getElementById('theme-meta');
         
         const applyReaderMode = (isActive) => {
             if (isActive) {
-                document.body.classList.add('reader-active');
+                document.documentElement.classList.add('reader-active');
                 if(readerToggle) readerToggle.innerText = 'Normal Mode';
                 if(readerToggleDropdown) readerToggleDropdown.innerText = 'Normal Mode';
+                if(themeMeta) themeMeta.setAttribute('content', '#0a0a0a');
             } else {
-                document.body.classList.remove('reader-active');
+                document.documentElement.classList.remove('reader-active');
                 if(readerToggle) readerToggle.innerText = 'Reader Mode';
                 if(readerToggleDropdown) readerToggleDropdown.innerText = 'Reader Mode';
+                if(themeMeta) themeMeta.setAttribute('content', '#f7f7f5');
             }
         };
 
-        // SYNC: Update UI button labels based on current body state (applied by Anti-Flash script)
-        const currentReaderActive = document.body.classList.contains('reader-active');
+        // SYNC: Update UI button labels based on current HTML state (applied by Head script)
+        const currentReaderActive = document.documentElement.classList.contains('reader-active');
         applyReaderMode(currentReaderActive);
 
         const handleToggle = () => {
-            const active = !document.body.classList.contains('reader-active');
+            const active = !document.documentElement.classList.contains('reader-active');
             applyReaderMode(active);
             localStorage.setItem('readerMode', active);
         };
