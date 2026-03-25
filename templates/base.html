@@ -314,7 +314,20 @@
         body.reader-active .dock-item.active { color: #ffffff !important; }
     </style>
 </head>
-<body>
+<body class="antialiased transition-colors duration-200">
+    <!-- ANTI-FLASH SCRIPT: Apply theme before browser paints -->
+    <script>
+        (function() {
+            try {
+                const mode = localStorage.getItem('readerMode');
+                if (mode === 'true') {
+                    document.body.classList.add('reader-active');
+                }
+            } catch (e) {
+                console.error("Theme initialization failed:", e);
+            }
+        })();
+    </script>
     <!-- UNIFIED STICKY HEADER -->
     <header class="sticky-header">
         <div class="max-w-[1320px] mx-auto px-4 md:px-10 py-6">
@@ -496,9 +509,9 @@
             }
         };
 
-        // Check preference
-        const isReaderActive = localStorage.getItem('readerMode') === 'true';
-        applyReaderMode(isReaderActive);
+        // SYNC: Update UI button labels based on current body state (applied by Anti-Flash script)
+        const currentReaderActive = document.body.classList.contains('reader-active');
+        applyReaderMode(currentReaderActive);
 
         const handleToggle = () => {
             const active = !document.body.classList.contains('reader-active');
