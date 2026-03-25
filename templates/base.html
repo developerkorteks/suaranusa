@@ -18,9 +18,39 @@
     
     <!-- iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="suaranusa">
     <link rel="apple-touch-icon" href="{% static 'images/icon.png' %}">
+
+    <!-- Global Share Helper -->
+    <script>
+        window._shareContent = async (title, url) => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: title,
+                        text: 'Baca berita terbaru di suaranusa: ' + title,
+                        url: url,
+                    });
+                } catch (err) {
+                    console.log('Share cancelled or failed');
+                }
+            } else {
+                // Fallback: Copy to clipboard
+                const dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = url;
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                alert('Link berita telah disalin ke clipboard!');
+            }
+        };
+    </script>
+
+
+
 
 
     
