@@ -33,7 +33,7 @@ SECRET_KEY = "django-insecure-ecyb39g=dzl3(_23_+*m92q1(9d9c@b*wj_t2)7o+gj+^guj4_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG =  False 
 
-ALLOWED_HOSTS = ["humanmade.my.id", "markom.humanmade.my.id", "localhost", "127.0.0.1", "testserver"]
+ALLOWED_HOSTS = ["suaranusa.my.id", "markom.humanmade.my.id", "localhost", "127.0.0.1", "testserver"]
 
 # Application definition
 
@@ -166,9 +166,9 @@ STATICFILES_DIRS = [
 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = [
-    "https://humanmade.my.id",
-    "http://humanmade.my.id",
-    "https://markom.humanmade.my.id",
+    "https://suaranusa.my.id",
+    "http://suaranusa.my.id",
+    "https://suaranusa.my.id",
     "http://markom.humanmade.my.id",
 ]
 
