@@ -104,6 +104,15 @@ class DataNormalizer:
         """
         self.stats["total_processed"] += 1
 
+        # Clean source to be a domain if it looks like a URL
+        clean_source = source or "unknown"
+        if "://" in clean_source or clean_source.startswith("www."):
+            try:
+                parsed_source = urlparse(clean_source if "://" in clean_source else f"https://{clean_source}")
+                clean_source = parsed_source.netloc.replace("www.", "") or clean_source
+            except:
+                pass
+
         # Create base normalized structure
         normalized = {
             "id": None,
@@ -116,7 +125,7 @@ class DataNormalizer:
             "content": None,
             "tags": [],
             "author": None,
-            "source": source or "unknown",
+            "source": clean_source,
             "source_url": raw_data.get("source_url", ""),
             "scraped_at": raw_data.get("scraped_at") or datetime.utcnow().isoformat(),
             "quality_score": 0.0,
@@ -328,8 +337,40 @@ class DataNormalizer:
 
     def _enrich_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Enrich data with additional computed fields."""
-        # Extract domain from URL
-        if data["url"]:
+        # 1. Infer Category from URL and Source (If category is None or "null")
+        if not data.get("category") or str(data.get("category")).lower() == "null":
+            url = data.get("url") or ""
+            source = data.get("source") or ""
+            
+            if "/tag/" in url:
+                data["category"] = "TOPIK KHUSUS"
+            elif "/edu/" in url:
+                data["category"] = "EDUKASI"
+            elif "/sepakbola/" in url or "sport.detik.com" in source:
+                data["category"] = "OLAHRAGA"
+            elif "/finance/" in url or "finance.detik.com" in source:
+                data["category"] = "EKONOMI BISNIS"
+            elif "20.detik.com" in source or "/video-" in url.lower():
+                data["category"] = "VIDEO"
+            elif "hot.detik.com" in source:
+                data["category"] = "CELEB"
+            elif "health.detik.com" in source:
+                data["category"] = "BERITA DETIKHEALTH"
+            elif "inet.detik.com" in source:
+                data["category"] = "TEKNOLOGI"
+            elif "wolipop.detik.com" in source:
+                data["category"] = "GAYA HIDUP"
+            elif "oto.detik.com" in source:
+                data["category"] = "OTOMOTIF"
+            elif "travel.detik.com" in source:
+                data["category"] = "TRAVEL"
+            elif "news.detik.com" in source or "/berita/" in url:
+                data["category"] = "NEWS"
+            else:
+                data["category"] = "WARTA UTAMA"
+
+        # 2. Extract domain from URL if source is still unknown
+        if data["url"] and (not data.get("source") or data["source"] == "unknown"):
             try:
                 parsed = urlparse(data["url"])
                 if not data.get("source") or data["source"] == "unknown":

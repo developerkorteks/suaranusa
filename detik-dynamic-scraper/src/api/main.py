@@ -158,10 +158,15 @@ async def sync_full(request: SyncRequest):
 @app.post("/api/articles/search")
 async def search_articles(request: SearchRequest):
     try:
+        # Normalize category input (VIDEO vs video)
+        category = request.category
+        if category and category.lower() != "null":
+            category = category.upper()
+
         articles = article_service.search_articles(
             query=request.query,
             source=request.source,
-            category=request.category,
+            category=category,
             limit=request.limit,
             offset=request.offset,
         )
