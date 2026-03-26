@@ -1,18 +1,10 @@
 #!/bin/bash
-# Detik.com Scheduled Sync Runner
-# This script can be used with cron for scheduled syncs
+# Detik.com Scheduled Sync Runner - Production VPS Version
+# Optimized for VPS at /root/suaranusa/
 
-# Configuration
+# Configuration for Production VPS
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# Auto-detect venv_detik location
-if [ -d "/root/suaranusa/venv_detik" ]; then
-    VENV_PATH="/root/suaranusa/venv_detik"
-elif [ -d "/home/korteks/Data/project/suaranusa.my.id/detik.com/venv_detik" ]; then
-    VENV_PATH="/home/korteks/Data/project/suaranusa.my.id/detik.com/venv_detik"
-else
-    echo "Error: venv_detik not found!"
-    exit 1
-fi
+VENV_PATH="/root/suaranusa/venv_detik"
 DB_PATH="data/comprehensive_full_test.db"
 ARTICLES_PER_DOMAIN=10
 LOG_DIR="$SCRIPT_DIR/logs"
@@ -20,6 +12,12 @@ LOG_FILE="$LOG_DIR/scheduled_sync_$(date +%Y%m%d).log"
 
 # Create log directory if it doesn't exist
 mkdir -p "$LOG_DIR"
+
+# Check if venv exists
+if [ ! -d "$VENV_PATH" ]; then
+    echo "Error: Virtual environment not found at $VENV_PATH"
+    exit 1
+fi
 
 # Activate virtual environment
 source "$VENV_PATH/bin/activate"
@@ -30,6 +28,8 @@ cd "$SCRIPT_DIR"
 # Log start
 echo "========================================" >> "$LOG_FILE"
 echo "Scheduled Sync Started: $(date)" >> "$LOG_FILE"
+echo "VENV: $VENV_PATH" >> "$LOG_FILE"
+echo "Working Directory: $(pwd)" >> "$LOG_FILE"
 echo "========================================" >> "$LOG_FILE"
 
 # Run sync using Python scheduler (one-time mode)
