@@ -368,9 +368,9 @@ class DataNormalizer:
             elif "travel.detik.com" in source:
                 data["category"] = "TRAVEL"
             elif "/berita/" in url or "news.detik.com" in source:
-                data["category"] = "NASIONAL"
+                data["category"] = "NEWS"
             else:
-                data["category"] = "WARTA UTAMA"
+                data["category"] = "NASIONAL"
 
         # 2. Extract domain from URL if source is still unknown
         if data["url"] and (not data.get("source") or data["source"] == "unknown"):

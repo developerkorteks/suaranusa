@@ -88,7 +88,8 @@ def dynamic_categories(request):
             return {
                 "nav_categories_main": sorted_cats[:5],  # First 5 for main bar
                 "nav_categories_more": sorted_cats[5:],  # The rest for dropdown
-                "nav_categories_all": sorted_cats        # All for mobile menu
+                "nav_categories_all": sorted_cats,       # All for mobile menu
+                "category_count": len(sorted_cats)
             }
     except Exception:
         pass
@@ -97,5 +98,6 @@ def dynamic_categories(request):
     return {
         "nav_categories_main": fallback[:5],
         "nav_categories_more": fallback[5:],
-        "nav_categories_all": fallback
+        "nav_categories_all": fallback,
+        "category_count": len(fallback)
     }

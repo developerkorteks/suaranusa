@@ -53,22 +53,20 @@ class HomePageView(View):
             
         page_size = 12
         
-        # 1. Fetch a larger chunk from API to allow local filtering
-        # Since many database category fields are null, we filter via resolve_category
-        # If searching, we hit the API hard. If filtering category, we fetch more.
-        fetch_limit = 100 if selected_category else page_size + 1
+        # 1. Fetch from API
+        # We now pass selected_category to the API so it filters at the database level
+        fetch_limit = page_size + 1 if not selected_category else 100
         raw_articles = await api_service.get_articles(
             limit=fetch_limit, 
-            offset=0 if selected_category else (page - 1) * page_size, 
-            query=search_query
+            offset=(page - 1) * page_size, 
+            query=search_query,
+            category=selected_category
         )
         
         processed_articles = []
-        all_categories = set(["NASIONAL", "EKONOMI", "INTERNASIONAL", "TEKNOLOGI", "HIBURAN", "OLAHRAGA", "GAYA HIDUP"])
 
         for item in raw_articles:
             clean_category = self.resolve_category(item)
-            all_categories.add(clean_category)
             
             url = item.get("url") or ""
             title = item.get("title") or ""
@@ -97,12 +95,7 @@ class HomePageView(View):
                 'source_display': source_display
             }
 
-            # Filter logic (Local)
-            if selected_category:
-                if article_obj['category'].upper() == selected_category.upper():
-                    processed_articles.append(article_obj)
-            else:
-                processed_articles.append(article_obj)
+            processed_articles.append(article_obj)
 
         # Slice for pagination
         start_idx = (page - 1) * page_size
@@ -110,13 +103,10 @@ class HomePageView(View):
         paged_articles = processed_articles[start_idx:end_idx] if selected_category else processed_articles[:page_size]
         
         has_next = len(processed_articles) > end_idx if selected_category else len(raw_articles) > page_size
-        unique_categories = sorted(list(all_categories))
 
         context = {
             "articles": paged_articles,
             "total_count": len(processed_articles),
-            "category_count": len(unique_categories),
-            "categories": unique_categories,
             "selected_category": selected_category,
             "search_query": search_query,
             "page": page,

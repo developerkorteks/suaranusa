@@ -29,7 +29,7 @@
     <a href="{% url 'portal:home' %}" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] {% if not selected_category %}text-red-600 border-b-2 border-red-600 pb-1{% else %}text-gray-400{% endif %}">
         ALL STORY
     </a>
-    {% for cat in categories %}
+    {% for cat in nav_categories_all %}
         <a href="{% url 'portal:home' %}?cat={{ cat }}" class="flex-shrink-0 text-[10px] font-black uppercase tracking-[0.3em] {% if selected_category == cat %}text-red-600 border-b-2 border-red-600 pb-1{% else %}text-gray-400{% endif %}">
             {{ cat }}
         </a>
