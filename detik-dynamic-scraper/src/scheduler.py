@@ -267,7 +267,7 @@ async def main():
                        help='Cron expression for custom mode (e.g., "0 */6 * * *")')
     parser.add_argument('--articles-per-domain', type=int, default=10,
                        help='Number of articles to sync per domain, default: 10')
-    parser.add_argument('--db-path', type=str, default='data/comprehensive_full_test.db',
+    parser.add_argument('--db-path', type=str, default='/root/suaranusa/data/comprehensive_full_test.db',
                        help='Database path')
     parser.add_argument('--run-now', action='store_true',
                        help='Run sync immediately on startup')
