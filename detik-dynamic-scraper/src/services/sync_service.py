@@ -66,6 +66,9 @@ class SyncService:
                     url = article.get("url")
                     if not url:
                         continue
+                    
+                    # Ensure article has a clean source for the normalizer
+                    article["source"] = domain
 
                     # FIX: Use detail_scraper instead of list_scraper for media hydration
                     success, media_info = (

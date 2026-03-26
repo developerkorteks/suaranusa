@@ -247,6 +247,11 @@ class ScraperService:
             # Preserve quality score
             update_data["quality_score"] = article.get("quality_score")
 
+            # NEW: Run through normalizer to fix category and source consistency
+            normalized = self.normalizer.normalize(update_data, source=update_data.get("source"))
+            if normalized:
+                update_data = normalized
+
             is_success = self.repository.save(update_data)
             return is_success, {"images": len(images), "videos": len(videos)}
 
