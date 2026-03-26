@@ -2,32 +2,23 @@ module.exports = {
   apps: [
     {
       name: "suaranusa-api",
-      script: "./venv_detik/bin/python",
-      args: "src/api/main.py",
-      cwd: "./detik-dynamic-scraper",
-      interpreter: "none",
+      cwd: "/root/suaranusa/detik-dynamic-scraper",
+      script: "/root/suaranusa/venv_detik/bin/python3",
+      args: "-m uvicorn src.api.main:app --port 65080 --host 127.0.0.1",
       env: {
-        PYTHONPATH: "./src",
-        API_PORT: 65080,
-        API_HOST: "127.0.0.1"
+        DATABASE_PATH: "/root/suaranusa/data/comprehensive_full_test.db",
+        PYTHONPATH: "/root/suaranusa/detik-dynamic-scraper/src"
       }
     },
     {
       name: "suaranusa-portal",
-      script: "./venv_detik/bin/python",
-      args: "manage.py runserver 127.0.0.1:65081 --noreload",
-      cwd: ".",
-      interpreter: "none",
+      cwd: "/root/suaranusa",
+      script: "/root/suaranusa/venv_detik/bin/python3",
+      args: "manage.py runserver 0.0.0.0:65081",
       env: {
-        API_BASE_URL: "http://127.0.0.1:65080"
+        API_BASE_URL: "http://127.0.0.1:65080",
+        DEBUG: "False"
       }
-    },
-    {
-      name: "suaranusa-scheduler",
-      script: "./venv_detik/bin/python",
-      args: "manage.py run_scheduler",
-      cwd: ".",
-      interpreter: "none"
     }
   ]
-};
+}

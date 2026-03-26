@@ -72,8 +72,8 @@ async def add_process_time_header(request: Request, call_next):
 
 
 # Global Service Instances
-SCRAPER_ROOT = Path(__file__).parent.parent.parent
-DEFAULT_DB_PATH = SCRAPER_ROOT / "data" / "comprehensive_full_test.db"
+SCRAPER_ROOT = Path("/root/suaranusa/detik-dynamic-scraper")
+DEFAULT_DB_PATH = Path("/root/suaranusa/data/comprehensive_full_test.db")
 
 # BP #7: Environment-based configuration
 import os
