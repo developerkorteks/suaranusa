@@ -88,6 +88,11 @@ class ArticleDetailScraper:
                     all_images = self._extract_all_images(soup)
                     all_videos = self._extract_videos(soup)
 
+                    # Extract source domain from URL
+                    from urllib.parse import urlparse
+                    parsed = urlparse(url)
+                    source_domain = parsed.netloc if parsed.netloc else None
+
                     # Extract article data
                     article = {
                         "url": url,
@@ -103,6 +108,9 @@ class ArticleDetailScraper:
                         "images": all_images,
                         "videos": all_videos,
                         "has_media": len(all_images) > 0 or len(all_videos) > 0,
+                        # FIX: Add source field
+                        "source": source_domain,
+                        "source_url": url,
                     }
 
                     return article

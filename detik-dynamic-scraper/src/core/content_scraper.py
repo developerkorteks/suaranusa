@@ -288,6 +288,11 @@ class ContentScraper:
         self, raw: Dict[str, Any], source_url: str
     ) -> Dict[str, Any]:
         """Normalize article data to standard format."""
+        # Extract source domain from source_url
+        from urllib.parse import urlparse
+        parsed = urlparse(source_url)
+        source_domain = parsed.netloc if parsed.netloc else None
+        
         article = {
             "id": None,
             "title": None,
@@ -298,6 +303,7 @@ class ContentScraper:
             "description": None,
             "tags": [],
             "author": None,
+            "source": source_domain,  # FIX: Add source field
             "source_url": source_url,
             "scraped_at": datetime.utcnow().isoformat(),
             "raw_data": raw,  # Keep original for reference
@@ -423,6 +429,11 @@ class ContentScraper:
         self, element: Any, source_url: str
     ) -> Optional[Dict[str, Any]]:
         """Extract article data from HTML element."""
+        # Extract source domain from source_url
+        from urllib.parse import urlparse
+        parsed = urlparse(source_url)
+        source_domain = parsed.netloc if parsed.netloc else None
+        
         article = {
             "id": None,
             "title": None,
@@ -433,6 +444,7 @@ class ContentScraper:
             "description": None,
             "tags": [],
             "author": None,
+            "source": source_domain,  # FIX: Add source field
             "source_url": source_url,
             "scraped_at": datetime.utcnow().isoformat(),
         }
@@ -467,6 +479,11 @@ class ContentScraper:
         self, soup: BeautifulSoup, source_url: str
     ) -> Optional[Dict[str, Any]]:
         """Extract single article from detail page."""
+        # Extract source domain from source_url
+        from urllib.parse import urlparse
+        parsed = urlparse(source_url)
+        source_domain = parsed.netloc if parsed.netloc else None
+        
         article = {
             "id": None,
             "title": None,
@@ -478,6 +495,7 @@ class ContentScraper:
             "content": None,
             "tags": [],
             "author": None,
+            "source": source_domain,  # FIX: Add source field
             "source_url": source_url,
             "scraped_at": datetime.utcnow().isoformat(),
         }
