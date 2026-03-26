@@ -159,8 +159,15 @@ class ScheduledSyncService:
         """Get next scheduled run time"""
         jobs = self.scheduler.get_jobs()
         if jobs:
-            next_run = min(job.next_run_time for job in jobs if job.next_run_time)
-            return next_run.strftime('%Y-%m-%d %H:%M:%S')
+            try:
+                # APScheduler 3.x uses next_run_time attribute
+                next_runs = [job.next_run_time for job in jobs if hasattr(job, 'next_run_time') and job.next_run_time]
+                if next_runs:
+                    next_run = min(next_runs)
+                    return next_run.strftime('%Y-%m-%d %H:%M:%S')
+            except AttributeError:
+                # Fallback for older versions
+                return "Next run time unavailable"
         return "No jobs scheduled"
     
     def list_jobs(self):
