@@ -1,4 +1,3 @@
-
 import sqlite3
 import os
 import sys
@@ -13,18 +12,20 @@ if not os.path.exists(DB_PATH):
     DB_PATH = "data/comprehensive_full_test.db"
 
 def infer_category(url, source):
+    # Synchronized with Django Hardcoded Buttons
     if "/tag/" in url: return "TOPIK KHUSUS"
-    if "/edu/" in url: return "EDUKASI"
+    if "/internasional/" in url: return "INTERNASIONAL"
+    if "/edu/" in url: return "TEKNOLOGI"
     if "/sepakbola/" in url or "sport.detik.com" in source: return "OLAHRAGA"
-    if "/finance/" in url or "finance.detik.com" in source: return "EKONOMI BISNIS"
+    if "/finance/" in url or "finance.detik.com" in source: return "EKONOMI"
     if "20.detik.com" in source or "/video-" in url.lower(): return "VIDEO"
-    if "hot.detik.com" in source: return "CELEB"
-    if "health.detik.com" in source: return "BERITA DETIKHEALTH"
+    if "hot.detik.com" in source: return "HIBURAN"
+    if "health.detik.com" in source: return "NEWS"
     if "inet.detik.com" in source: return "TEKNOLOGI"
     if "wolipop.detik.com" in source: return "GAYA HIDUP"
     if "oto.detik.com" in source: return "OTOMOTIF"
     if "travel.detik.com" in source: return "TRAVEL"
-    if "news.detik.com" in source or "/berita/" in url: return "NEWS"
+    if "/berita/" in url or "news.detik.com" in source: return "NASIONAL"
     return "WARTA UTAMA"
 
 def fix_database():
@@ -65,7 +66,7 @@ def fix_database():
             
     conn.commit()
     conn.close()
-    print(f"Successfully updated {updated_count} articles.")
+    print(f"Successfully updated {updated_count} articles with NEW MAPPING.")
 
 if __name__ == "__main__":
     fix_database()

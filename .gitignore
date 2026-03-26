@@ -59,3 +59,5 @@ detik-dynamic-scraper/.env
 # OS specific
 .DS_Store
 Thumbs.db
+data/*.db
+*.db

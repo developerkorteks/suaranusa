@@ -342,20 +342,23 @@ class DataNormalizer:
             url = data.get("url") or ""
             source = data.get("source") or ""
             
+            # Match with Django Hardcoded Buttons
             if "/tag/" in url:
                 data["category"] = "TOPIK KHUSUS"
+            elif "/internasional/" in url:
+                data["category"] = "INTERNASIONAL"
             elif "/edu/" in url:
-                data["category"] = "EDUKASI"
+                data["category"] = "TEKNOLOGI"
             elif "/sepakbola/" in url or "sport.detik.com" in source:
                 data["category"] = "OLAHRAGA"
             elif "/finance/" in url or "finance.detik.com" in source:
-                data["category"] = "EKONOMI BISNIS"
+                data["category"] = "EKONOMI"
             elif "20.detik.com" in source or "/video-" in url.lower():
                 data["category"] = "VIDEO"
             elif "hot.detik.com" in source:
-                data["category"] = "CELEB"
+                data["category"] = "HIBURAN"
             elif "health.detik.com" in source:
-                data["category"] = "BERITA DETIKHEALTH"
+                data["category"] = "NEWS"
             elif "inet.detik.com" in source:
                 data["category"] = "TEKNOLOGI"
             elif "wolipop.detik.com" in source:
@@ -364,8 +367,8 @@ class DataNormalizer:
                 data["category"] = "OTOMOTIF"
             elif "travel.detik.com" in source:
                 data["category"] = "TRAVEL"
-            elif "news.detik.com" in source or "/berita/" in url:
-                data["category"] = "NEWS"
+            elif "/berita/" in url or "news.detik.com" in source:
+                data["category"] = "NASIONAL"
             else:
                 data["category"] = "WARTA UTAMA"
 
