@@ -1,5 +1,15 @@
 from django.contrib import admin
-from .models import AdSlot
+from django_summernote.admin import SummernoteModelAdmin
+from .models import AdSlot, ManualArticle
+
+@admin.register(ManualArticle)
+class ManualArticleAdmin(SummernoteModelAdmin):
+    list_display = ('title', 'category', 'author', 'publish_date', 'is_published')
+    list_filter = ('category', 'is_published', 'publish_date')
+    search_fields = ('title', 'content', 'author')
+    prepopulated_fields = {'slug': ('title',)}
+    summernote_fields = ('content',)
+    ordering = ('-publish_date',)
 
 @admin.register(AdSlot)
 class AdSlotAdmin(admin.ModelAdmin):

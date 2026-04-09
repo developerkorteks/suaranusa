@@ -59,3 +59,71 @@ class AdSlot(models.Model):
     class Meta:
         verbose_name = "Advertisement Slot"
         verbose_name_plural = "Advertisement Slots"
+
+from django.utils.text import slugify
+from django.utils import timezone
+
+class ManualArticle(models.Model):
+    """
+    Manual Article Management for suaranusa.
+    Allows creating original content directly via Django Admin.
+    """
+    CATEGORY_CHOICES = [
+        ('NEWS', 'News'),
+        ('NASIONAL', 'Nasional'),
+        ('INTERNASIONAL', 'Internasional'),
+        ('EKONOMI', 'Ekonomi'),
+        ('OLAHRAGA', 'Olahraga'),
+        ('TEKNOLOGI', 'Teknologi'),
+        ('HIBURAN', 'Hiburan'),
+        ('GAYA HIDUP', 'Gaya Hidup'),
+        ('OTOMOTIF', 'Otomotif'),
+        ('TRAVEL', 'Travel'),
+        ('VIDEO', 'Video'),
+        ('TOPIK KHUSUS', 'Topik Khusus'),
+    ]
+
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    main_image = models.ImageField(upload_to='manual_news/%Y/%m/%d/', help_text="Featured image for the article")
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='NEWS')
+    content = models.TextField(help_text="Full article content (supports HTML via Summernote)")
+    author = models.CharField(max_length=100, default="Redaksi Suaranusa")
+    publish_date = models.DateTimeField(default=timezone.now)
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def to_dict(self):
+        """Convert model instance to a dictionary compatible with Scraper API format."""
+        return {
+            'id': f"m-{self.id}",
+            'title': self.title,
+            'url': f"/news/{self.id}/{self.slug}/",
+            'image': self.main_image.url if self.main_image else None,
+            'category': self.category,
+            'publish_date': self.publish_date.isoformat(),
+            'description': self.content[:200] + "..." if self.content else "",
+            'content': self.content,
+            'author': self.author,
+            'source': "suaranusa.my.id",
+            'is_manual': True,
+            'scraped_at': self.created_at.isoformat(),
+            'metadata': {
+                'images': [{'url': self.main_image.url}] if self.main_image else [],
+                'is_manual': True
+            }
+        }
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Manual Article"
+        verbose_name_plural = "Manual Articles"
+        ordering = ['-publish_date']

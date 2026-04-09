@@ -2,6 +2,8 @@ from django.views import View
 from django.shortcuts import render, Http404
 from django.utils.text import slugify
 from portal.services.api_client import ApiService
+from portal.models import ManualArticle
+from asgiref.sync import sync_to_async
 from urllib.parse import urlparse
 import logging
 import json
@@ -14,10 +16,14 @@ class ArticleDetailView(View):
     """
     Super-Robust Async View with Dynamic Category and Content Enrichment.
     Ensures zero jejak detik and high data quality across all domains.
+    NEW: Supports manual articles from local database.
     """
     
     def resolve_category(self, item):
         """Smart Category Resolver (Consistent with Home View)."""
+        if item.get('is_manual'):
+            return str(item.get("category")).upper()
+
         api_cat = item.get("category")
         if api_cat and api_cat.lower() != "null":
             return str(api_cat).upper()
@@ -43,38 +49,55 @@ class ArticleDetailView(View):
 
     async def get(self, request, article_id, slug=None):
         api_service = ApiService()
+        article_id_str = str(article_id)
         
-        # 1. Fetch with Retry Logic
+        # 1. Check if it's a Manual Article
         raw_article = None
-        for attempt in range(3):
-            raw_article = await api_service.get_article_detail(article_id)
-            if raw_article: break
-            if attempt < 2: await asyncio.sleep(0.5 * (attempt + 1))
+        if article_id_str.startswith("m-"):
+            manual_id = article_id_str.replace("m-", "")
+            try:
+                def get_manual_sync():
+                    try:
+                        obj = ManualArticle.objects.get(id=manual_id, is_published=True)
+                        return obj.to_dict()
+                    except ManualArticle.DoesNotExist:
+                        return None
+                raw_article = await sync_to_async(get_manual_sync)()
+            except Exception as e:
+                logger.error(f"Error fetching manual article {manual_id}: {e}")
+
+        # 2. Fetch from API if not manual or not found in manual
+        if not raw_article:
+            for attempt in range(3):
+                raw_article = await api_service.get_article_detail(article_id)
+                if raw_article: break
+                if attempt < 2: await asyncio.sleep(0.5 * (attempt + 1))
         
         if not raw_article: raise Http404("Berita tidak ditemukan")
         
-        # 2. Dynamic Content Enrichment
+        # 3. Dynamic Content Enrichment (Only for Scraper Data)
         content = raw_article.get("content") or ""
         metadata = raw_article.get("metadata") or {}
         if isinstance(metadata, str):
             try: metadata = json.loads(metadata)
             except: metadata = {}
         
-        # Auto-trigger enrichment if content is missing or video detected
-        is_video_type = "video" in (raw_article.get("title") or "").lower() or "20." in (raw_article.get("url") or "")
-        
-        if len(content) < 300 or (is_video_type and not metadata.get("videos")):
-            logger.info(f"Triggering enrichment for {article_id}")
-            success = await api_service.trigger_scrape_detail(article_id)
-            if success:
-                raw_article = await api_service.get_article_detail(article_id)
-                metadata = raw_article.get("metadata") or {}
-                if isinstance(metadata, str):
-                    try: metadata = json.loads(metadata)
-                    except: metadata = {}
+        if not raw_article.get('is_manual'):
+            # Auto-trigger enrichment if content is missing or video detected
+            is_video_type = "video" in (raw_article.get("title") or "").lower() or "20." in (raw_article.get("url") or "")
+            
+            if len(content) < 300 or (is_video_type and not metadata.get("videos")):
+                logger.info(f"Triggering enrichment for {article_id}")
+                success = await api_service.trigger_scrape_detail(article_id)
+                if success:
+                    raw_article = await api_service.get_article_detail(article_id)
+                    metadata = raw_article.get("metadata") or {}
+                    if isinstance(metadata, str):
+                        try: metadata = json.loads(metadata)
+                        except: metadata = {}
 
-        # 3. Dynamic Mapping & Anonymization
-        parsed_url = urlparse(raw_article.get('url') or "https://detik.com")
+        # 4. Dynamic Mapping & Anonymization
+        parsed_url = urlparse(raw_article.get('url') or "https://suaranusa.my.id")
         current_category = self.resolve_category(raw_article)
         
         article = {
@@ -84,16 +107,18 @@ class ArticleDetailView(View):
             'image': raw_article.get('image'),
             'content': raw_article.get('content') or "",
             'author': raw_article.get('author') or "Redaksi Utama",
-            'source_display': parsed_url.netloc.replace("www.", ""),
+            'source_display': parsed_url.netloc.replace("www.", "") if not raw_article.get('is_manual') else "suaranusa.my.id",
             'category': current_category,
             'scraped_at': raw_article.get('scraped_at'),
             'quality_score': raw_article.get('quality_score', 0.75),
             'tags': raw_article.get('tags', []),
             'all_images': self._normalize_media(metadata.get('images') or []),
-            'all_videos': self._normalize_media(metadata.get('videos') or [])
+            'all_videos': self._normalize_media(metadata.get('videos') or []),
+            'is_manual': raw_article.get('is_manual', False)
         }
 
-        # 4. Fetch Related Articles (Same Category)
+        # 5. Fetch Related Articles (Same Category)
+        # Combine related from API (manual articles don't have tags in API yet)
         related_raw = await api_service.get_articles(limit=10, category=current_category)
         related_articles = []
         for item in related_raw:

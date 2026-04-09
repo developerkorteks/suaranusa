@@ -2,6 +2,8 @@ from django.views import View
 from django.shortcuts import render
 from django.utils.text import slugify
 from portal.services.api_client import ApiService
+from portal.models import ManualArticle
+from asgiref.sync import sync_to_async
 from urllib.parse import urlparse
 import logging
 import json
@@ -14,10 +16,15 @@ class HomePageView(View):
     Enhanced Dynamic View:
     - Smart dynamic mapping based on URL patterns, subdomains, and media types.
     - Robust Video detection for cross-domain content.
+    - NEW: Merges manual articles from local DB with Scraper API data.
     """
     
     def resolve_category(self, item):
         """Smartly resolves category from URL and source without hardcoding."""
+        # For manual articles, use the category field directly
+        if item.get('is_manual'):
+            return str(item.get("category")).upper()
+
         api_cat = item.get("category")
         if api_cat and api_cat.lower() != "null":
             return str(api_cat).upper()
@@ -53,19 +60,35 @@ class HomePageView(View):
             
         page_size = 12
         
-        # 1. Fetch from API
-        # We now pass selected_category to the API so it filters at the database level
-        fetch_limit = page_size + 1 if not selected_category else 100
-        raw_articles = await api_service.get_articles(
+        # 1. Fetch from Local DB (Manual Articles)
+        # We fetch manual articles that match search query or category
+        def get_manual_articles_sync():
+            qs = ManualArticle.objects.filter(is_published=True)
+            if selected_category:
+                qs = qs.filter(category__iexact=selected_category)
+            if search_query:
+                qs = qs.filter(title__icontains=search_query) | qs.filter(content__icontains=search_query)
+            # Fetch a buffer to allow meaningful merging
+            return [obj.to_dict() for obj in qs[:50]]
+
+        manual_raw = await sync_to_async(get_manual_articles_sync)()
+
+        # 2. Fetch from Scraper API
+        # We fetch a buffer from API as well
+        fetch_limit = 50 
+        raw_api_articles = await api_service.get_articles(
             limit=fetch_limit, 
             offset=(page - 1) * page_size, 
             query=search_query,
             category=selected_category
         )
         
+        # Combine Raw Data
+        all_raw = manual_raw + raw_api_articles
+        
         processed_articles = []
 
-        for item in raw_articles:
+        for item in all_raw:
             clean_category = self.resolve_category(item)
             
             url = item.get("url") or ""
@@ -80,6 +103,9 @@ class HomePageView(View):
             
             is_video = ("20.detik.com" in source_display or "/video-" in url.lower() or bool(metadata.get("videos")))
             
+            # Use publish_date or scraped_at for sorting
+            sort_date = item.get('publish_date') or item.get('scraped_at') or "2026-03-24"
+            
             article_obj = {
                 'id': item.get('id'),
                 'title': title or "Berita Terkini",
@@ -87,22 +113,27 @@ class HomePageView(View):
                 'image': item.get("image") or (metadata.get("images")[0].get("url") if metadata.get("images") else None),
                 'category': clean_category,
                 'author': item.get('author') or "Redaksi",
-                'date': (item.get('publish_date') or item.get('scraped_at') or "2026-03-24")[:10],
+                'date': sort_date[:10],
+                'sort_date': sort_date, # Internal use for sorting
                 'is_video': is_video,
                 'is_gallery': bool(metadata.get("images") and len(metadata.get("images")) > 1),
                 'is_long_read': len(item.get("content") or "") > 2500,
                 'quality_score': item.get('quality_score', 0.5),
-                'source_display': source_display
+                'source_display': source_display,
+                'is_manual': item.get('is_manual', False)
             }
 
             processed_articles.append(article_obj)
 
-        # Slice for pagination
+        # 3. Sort Combined Articles by sort_date DESC
+        processed_articles.sort(key=lambda x: x['sort_date'], reverse=True)
+
+        # 4. Final Pagination
         start_idx = (page - 1) * page_size
         end_idx = start_idx + page_size
-        paged_articles = processed_articles[start_idx:end_idx] if selected_category else processed_articles[:page_size]
+        paged_articles = processed_articles[start_idx:end_idx]
         
-        has_next = len(processed_articles) > end_idx if selected_category else len(raw_articles) > page_size
+        has_next = len(processed_articles) > end_idx
 
         context = {
             "articles": paged_articles,

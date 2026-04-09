@@ -29,6 +29,7 @@ urlpatterns = [
     path("feed/", LatestNewsFeedView.as_view(), name="news_feed"),
     path("sw.js", ServiceWorkerView.as_view(), name="service_worker"),
     path("manifest.json", ManifestJsonView.as_view(), name="manifest_json"),
+    path("summernote/", include("django_summernote.urls")),
     path("", include("portal.urls", namespace="portal")),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
